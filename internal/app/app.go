@@ -12,8 +12,8 @@ import (
 func StartAntifaud() {
 
 	const (
-		CREATE = "/aggregation_rule/CREATE"
-		GET    = "/aggregation_rules/GET"
+		CREATE = "/aggregation_rule/create"
+		GET    = "/aggregation_rules/get"
 		START  = "Star server on port "
 		PORT   = ":8080"
 		AD     = "HTTP address"
@@ -27,7 +27,7 @@ func StartAntifaud() {
 
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
-	r.Post(CREATE, s.CreateAggregationRoull)
+	r.Post(CREATE, s.CreateAggregationRule)
 	r.Get(GET, s.GetAggregationData)
 
 	log.Println(START + *addr)

@@ -7,12 +7,12 @@ import (
 
 type Storage struct {
 	idStatic int
-	mp       map[[16]byte]*services.Rull
+	mp       map[[16]byte]*services.Rule
 	mx       sync.Mutex
 }
 
 func NewStorage() *Storage {
 	return &Storage{
-		mp: make(map[[16]byte]*services.Rull),
+		mp: make(map[[16]byte]*services.Rule),
 	}
 }

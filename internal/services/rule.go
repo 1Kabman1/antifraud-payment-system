@@ -1,6 +1,6 @@
 package services
 
-type Rull struct {
+type Rule struct {
 	AggregationRuleId int      `json:"id"`
 	Name              string   `json:"Name"`
 	AggregateBy       []string `json:"AggregateBy"`
