@@ -14,7 +14,8 @@ import (
 const (
 	CREATE     = "http://127.0.0.1:8080/aggregation_rule/create"
 	GET        = "http://127.0.0.1:8080/aggregation_rules/get"
-	COMPARABLE = "\n\n\n\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\",,,,,,,,,,,,,,,,,,,,,000111111122222233333445:::::::::::::::AAAAAABBBCCCNNNVVV[[[]]]aaaaaaaaaaaaddddddeeeeeeeeeeeeeeeeeeggggggggggggggggggiiilllmmmnnnooorrrrrrtttttttttuuuuuuyyy{{{}}}"
+	COMPARABLE = "\n\n\n\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"," +
+		",,,,,,,,,,,,,,001111222223333445:::::::::AAABBBNNN[[[]]]aaaaaadddeeeeeeeeegggggggggiiimmmrrrtttyyy{{{}}}"
 )
 
 type rule struct {
@@ -33,23 +34,12 @@ func main() {
 			AggregateBy: []string{strconv.Itoa(i + 1), strconv.Itoa(i + 2), strconv.Itoa(i + 3)},
 			Amount:      i,
 		}
-		tempReq, _ := json.Marshal(&r)
-		req := bytes.NewReader(tempReq)
+		jSON, _ := json.Marshal(&r)
+		req := bytes.NewReader(jSON)
 
 		client.Post(CREATE, "appliction/json", req)
 
 	}
-
-	r := rule{ // Создаем еще одно правило которое уже существует "Name":"2","AggregateBy":["3","4","5","2"],"AggregatedValue":2,"Count":1
-
-		Name:        strconv.Itoa(2),
-		AggregateBy: []string{strconv.Itoa(3), strconv.Itoa(4), strconv.Itoa(5)},
-		Amount:      1,
-	}
-	tempReq, _ := json.Marshal(&r)
-	request := bytes.NewReader(tempReq)
-
-	client.Post("http://127.0.0.1:8080/aggregation_rule/create", "appliction/json", request)
 
 	resp, err := http.Get(GET) // Получаем ответ от сервера
 	if err != nil {
@@ -63,12 +53,11 @@ func main() {
 	}
 	fmt.Println("Before sorting ", string(body))
 
-	sort.Slice(body, func(i, j int) bool { // Сортируем так как результат приходит рандомно из-за многопоточной реализации метода
+	sort.Slice(body, func(i, j int) bool { // Сортируем так как результат приходит рандомно из-за многопоточной реализации метода GET
 		return body[i] < body[j]
 	})
 
 	if COMPARABLE != string(body) { // Сравниваем результат
 		log.Fatalln("GET requests is not correct")
 	}
-
 }

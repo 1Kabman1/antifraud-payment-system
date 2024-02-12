@@ -2,17 +2,15 @@ package rest
 
 import (
 	"github.com/1Kabman1/Antifraud-payment-system.git/internal/services"
-	"sync"
 )
 
 type Storage struct {
 	idStatic int
-	mp       map[[16]byte]*services.Rule
-	mx       sync.Mutex
+	rules    map[[16]byte]*services.Rule
 }
 
 func NewStorage() *Storage {
 	return &Storage{
-		mp: make(map[[16]byte]*services.Rule),
+		rules: make(map[[16]byte]*services.Rule),
 	}
 }

@@ -5,78 +5,108 @@ import (
 	serv "github.com/1Kabman1/Antifraud-payment-system.git/internal/services"
 	"net/http"
 	"strconv"
+	"sync"
 )
 
 func (s *Storage) GetAggregationData(w http.ResponseWriter, _ *http.Request) {
 
+	rulesCHAN := make(chan []byte)
+	var ws sync.WaitGroup
+
+	ws.Add(1)
+	go func() {
+		defer ws.Done()
+		for _, rule := range s.rules {
+			ws.Add(1)
+			go func(rule interface{}) {
+				defer ws.Done()
+				jSON, err := json.Marshal(rule)
+				if err != nil {
+					http.Error(w, err.Error(), http.StatusInternalServerError)
+					return
+				}
+				rulesCHAN <- jSON
+			}(rule)
+		}
+	}()
+
+	go func() {
+		ws.Wait()
+		close(rulesCHAN)
+	}()
+
 	w.Header().Set("Status", "success")
 	w.Header().Set("Content-Type", "application/json")
 
-	jDataCh := make(chan []byte)
-
-	go func() {
-		for _, obj := range s.mp {
-
-			j, err := json.Marshal(obj)
-			if err != nil {
-				close(jDataCh)
-			}
-			jDataCh <- j
-
+	for rule := range rulesCHAN {
+		_, err := w.Write(rule)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
 		}
-		close(jDataCh)
-	}()
-
-	for {
-		rules, ok := <-jDataCh
-		if ok {
-			w.Write(rules)
-			w.Write([]byte(("\n")))
-		} else {
-			break
+		_, err = w.Write([]byte("\n"))
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
 		}
 	}
 
+	ws.Wait()
 }
 
 func (s *Storage) CreateAggregationRule(w http.ResponseWriter, r *http.Request) {
 
+	var ws sync.WaitGroup
 	newRule := new(serv.Rule)
-
-	defer r.Body.Close()
-	agrByChIn := make(chan []string)
-	argByChOut := make(chan [16]byte)
+	agrByCHAN := make(chan []string)
+	hashCHAN := make(chan [16]byte)
 	idOut := ""
 
+	defer r.Body.Close()
+
+	ws.Add(1)
 	go func() {
+		defer ws.Done()
 		err := json.NewDecoder(r.Body).Decode(&newRule)
 		if err != nil {
-			w.Header().Add("Status", "unsuccessful")
+			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 		newRule.AggregateBy = append(newRule.AggregateBy, newRule.Name)
-		agrByChIn <- newRule.AggregateBy
+		agrByCHAN <- newRule.AggregateBy
 	}()
 
-	go serv.MD5(<-agrByChIn, argByChOut)
+	ws.Add(1)
+	go func() {
+		defer ws.Done()
+		defer close(agrByCHAN)
+		serv.MD5(<-agrByCHAN, hashCHAN)
+	}()
 
-	argBy := <-argByChOut
+	ws.Add(1)
+	go func() {
+		defer ws.Done()
+		defer close(hashCHAN)
 
-	_, ok := s.mp[argBy]
+		key := <-hashCHAN
 
-	if ok {
-		s.mp[argBy].Amount += newRule.Amount
-		s.mp[argBy].Count += 1
-		idOut = " exists"
-	} else {
-		s.idStatic++
-		newRule.AggregationRuleId = s.idStatic
-		s.mp[argBy] = newRule
-		s.mp[argBy].Count = 1
-		idOut = strconv.Itoa(s.idStatic)
-		idOut += " created"
-	}
-	w.Header().Set("Message", "Rule "+idOut)
-	w.Header().Set("Status", "success")
+		_, ok := s.rules[key]
+
+		if ok {
+			w.Header().Set("Message", "rule already exists")
+			w.Header().Set("Status", " error "+strconv.Itoa(http.StatusConflict))
+
+		} else {
+			s.idStatic++
+			newRule.AggregationRuleId = s.idStatic
+			s.rules[key] = newRule
+			idOut = strconv.Itoa(s.idStatic)
+			idOut += " created "
+			w.Header().Set("Message", "Rule "+idOut)
+			w.Header().Set("Status", "success")
+		}
+	}()
+
+	ws.Wait()
 
 }
