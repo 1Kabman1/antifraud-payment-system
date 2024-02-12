@@ -25,11 +25,6 @@ func (s *Storage) GiveIdForRules() int {
 	return s.IdRules
 }
 
-func (s *Storage) GiveIdForClient() int {
-	s.IdClient++
-	return s.IdClient
-}
-
 //package rest
 //
 //import (
