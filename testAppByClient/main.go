@@ -14,14 +14,14 @@ import (
 const (
 	CREATE     = "http://127.0.0.1:8080/aggregation_rule/create"
 	GET        = "http://127.0.0.1:8080/aggregation_rules/get"
-	COMPARABLE = "\n\n\n\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"," +
-		",,,,,,,,,,,,,,001111222223333445:::::::::AAABBBNNN[[[]]]aaaaaadddeeeeeeeeegggggggggiiimmmrrrtttyyy{{{}}}"
+	COMPARABLE = "\n\n\n\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\",,,,,,,,,,,,,,,,,,001111222223333445::::::::::::AAAAAABBBNNNVVV[[[]]]aaaaaaaaaaaacccdddeeeeeeeeeeeeeeeeeeggggggggggggggggggiiilllmmmnnnooorrrrrrtttttttttuuuuuuyyy{{{}}}"
 )
 
 type rule struct {
-	Name        string   `json:"Name"`
-	AggregateBy []string `json:"AggregateBy"`
-	Amount      int      `json:"AggregatedValue"`
+	Name           string   `json:"Name"`
+	AggregateBy    []string `json:"AggregateBy"`
+	Amount         int      `json:"AggregatedValue"`
+	AggregateValue string   `json:"AggregateValue"`
 }
 
 func main() {
@@ -30,9 +30,10 @@ func main() {
 
 	for i := 0; i < 3; i++ { // Создаем правила в количестве 3 шт и постим на сервер
 		r := rule{
-			Name:        strconv.Itoa(i),
-			AggregateBy: []string{strconv.Itoa(i + 1), strconv.Itoa(i + 2), strconv.Itoa(i + 3)},
-			Amount:      i,
+			Name:           strconv.Itoa(i),
+			AggregateBy:    []string{strconv.Itoa(i + 1), strconv.Itoa(i + 2), strconv.Itoa(i + 3)},
+			Amount:         i,
+			AggregateValue: "count",
 		}
 		jSON, _ := json.Marshal(&r)
 		req := bytes.NewReader(jSON)

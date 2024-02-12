@@ -60,7 +60,6 @@ func (s *Storage) CreateAggregationRule(w http.ResponseWriter, r *http.Request) 
 	newRule := new(serv.Rule)
 	agrByCHAN := make(chan []string)
 	hashCHAN := make(chan [16]byte)
-	idOut := ""
 
 	defer r.Body.Close()
 
@@ -100,9 +99,8 @@ func (s *Storage) CreateAggregationRule(w http.ResponseWriter, r *http.Request) 
 			s.idStatic++
 			newRule.AggregationRuleId = s.idStatic
 			s.rules[key] = newRule
-			idOut = strconv.Itoa(s.idStatic)
-			idOut += " created "
-			w.Header().Set("Message", "Rule "+idOut)
+
+			w.Header().Set("Message", "Rule "+strconv.Itoa(s.idStatic)+" created")
 			w.Header().Set("Status", "success")
 		}
 	}()
