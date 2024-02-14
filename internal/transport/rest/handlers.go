@@ -99,7 +99,6 @@ func (s *Storage) CreateAggregationRule(w http.ResponseWriter, r *http.Request) 
 			s.idStatic++
 			newRule.AggregationRuleId = s.idStatic
 			s.rules[key] = newRule
-
 			w.Header().Set("Message", "Rule "+strconv.Itoa(s.idStatic)+" created")
 			w.Header().Set("Status", "success")
 		}
