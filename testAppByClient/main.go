@@ -24,8 +24,7 @@ type rule struct {
 	AggregateValue string   `json:"AggregateValue"`
 }
 
-func main() {
-
+func TestPostAndGetForRule() {
 	client := http.Client{} // Создаем клиента
 
 	for i := 0; i < 3; i++ { // Создаем правила в количестве 3 шт и постим на сервер
@@ -61,4 +60,9 @@ func main() {
 	if COMPARABLE != string(body) { // Сравниваем результат
 		log.Fatalln("GET requests is not correct")
 	}
+}
+
+func main() {
+
+	TestPostAndGetForRule()
 }
