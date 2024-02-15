@@ -6,11 +6,11 @@ import (
 
 type Storage struct {
 	idStatic int
-	rules    map[[16]byte]*services.Rule
+	rules    map[string]*services.Rule
 }
 
 func NewStorage() *Storage {
 	return &Storage{
-		rules: make(map[[16]byte]*services.Rule),
+		rules: make(map[string]*services.Rule),
 	}
 }

@@ -14,7 +14,7 @@ import (
 const (
 	CREATE     = "http://127.0.0.1:8080/aggregation_rule/create"
 	GET        = "http://127.0.0.1:8080/aggregation_rules/get"
-	COMPARABLE = "\n\n\n\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\",,,,,,,,,,,,,,,,,,001111222223333445::::::::::::AAAAAABBBNNNVVV[[[]]]aaaaaaaaaaaacccdddeeeeeeeeeeeeeeeeeeggggggggggggggggggiiilllmmmnnnooorrrrrrtttttttttuuuuuuyyy{{{}}}"
+	COMPARABLE = "\n\n\n\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\",,,,,,,,,,,,,,,011122223333445::::::::::::AAAAAABBBNNNVVV[[[]]]aaaaaaaaaaaacccdddeeeeeeeeeeeeeeeeeeggggggggggggggggggiiilllmmmnnnooorrrrrrtttttttttuuuuuuyyy{{{}}}"
 )
 
 type rule struct {
@@ -57,7 +57,9 @@ func TestPostAndGetForRule() {
 		return body[i] < body[j]
 	})
 
-	if COMPARABLE != string(body) { // Сравниваем результат
+	h := string(body)
+
+	if COMPARABLE != h { // Сравниваем результат
 		log.Fatalln("GET requests is not correct")
 	}
 }
