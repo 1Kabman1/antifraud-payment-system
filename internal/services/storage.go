@@ -93,16 +93,16 @@ func (s *Storage) CalculateTheAggregated(w http.ResponseWriter, r *http.Request)
 	}
 
 	ws := sync.WaitGroup{}
-	md5CHAN := make(chan []string)
-	keyCHAN := make(chan [][16]byte)
+	md5CHAN := make(chan map[string]string)
+	keyCHAN := make(chan map[string][16]byte)
 
 	ws.Add(1)
 	go func() {
 		defer ws.Done()
 
-		aggregateByS := make([]string, len(s.rules))
+		aggregateByS := make(map[string]string, len(s.rules))
 
-		for _, aRule := range s.rules {
+		for key, aRule := range s.rules {
 
 			for _, agg := range aRule.AggregateBy {
 				if v, ok := mapPING[agg]; ok {
@@ -115,10 +115,11 @@ func (s *Storage) CalculateTheAggregated(w http.ResponseWriter, r *http.Request)
 					case string:
 						aBuilder.WriteString(inter)
 					}
-					aAggregateBy := aBuilder.String()
+					aggBy := aBuilder.String()
 					//s.mux.Unlock()
 
-					aggregateByS = append(aggregateByS, aAggregateBy)
+					aggregateByS[key] = aggBy
+
 					aBuilder.Reset()
 				}
 			}
@@ -137,19 +138,22 @@ func (s *Storage) CalculateTheAggregated(w http.ResponseWriter, r *http.Request)
 	go func() {
 		defer ws.Done()
 
-		for _, key := range <-keyCHAN {
+		for keyForRule, key := range <-keyCHAN {
 
 			s.mux.Lock()
 			if c, ok := s.counters[key]; ok {
-				if aRule.AggregateValue == "count" {
+				if s.rules[keyForRule].AggregateValue == "count" {
 					c.count++
 				} else {
 					c.amount += mapPING["amount"].(float64)
 				}
 			} else {
 				aCounter := newCounter()
-				if aAmount, ok := mapPING["amount"].(float64); ok {
-					aCounter.amount = aAmount
+				if s.rules[keyForRule].AggregateValue == "count" {
+					if aAmount, ok := mapPING["amount"].(float64); ok {
+						aCounter.amount = aAmount
+					}
+
 				} else {
 					aCounter.count++
 				}
