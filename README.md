@@ -34,7 +34,7 @@
     "id":1,
     "Name":"Amount per client",
     "AggregateBy":["clientId", "bank_card"],
-    "AggregateValue":"amount",
+    "AggregateValue":"amount"
 }
 ```
 

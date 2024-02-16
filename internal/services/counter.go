@@ -1,11 +1,11 @@
 package services
 
-type Counter struct {
+type counter struct {
 	summandId int
 	count     int
-	amount    int
+	amount    float64
 }
 
-func NewCounter() *Counter {
-	return &Counter{}
+func newCounter() *counter {
+	return &counter{}
 }

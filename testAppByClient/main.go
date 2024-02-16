@@ -28,10 +28,17 @@ func TestPostAndGetForRule() {
 	client := http.Client{} // Создаем клиента
 
 	for i := 0; i < 3; i++ { // Создаем правила в количестве 3 шт и постим на сервер
+		//r := rule{
+		//	Name:           strconv.Itoa(i),
+		//	AggregateBy:    []string{strconv.Itoa(i + 1), strconv.Itoa(i + 2), strconv.Itoa(i + 3)},
+		//	Amount:         i,
+		//	AggregateValue: "count",
+		//}
+
 		r := rule{
 			Name:           strconv.Itoa(i),
-			AggregateBy:    []string{strconv.Itoa(i + 1), strconv.Itoa(i + 2), strconv.Itoa(i + 3)},
-			Amount:         i,
+			AggregateBy:    []string{"client_id", "payment_method_type", "payment_method_id"},
+			Amount:         i + 1000,
 			AggregateValue: "count",
 		}
 		jSON, _ := json.Marshal(&r)
