@@ -4,17 +4,13 @@ import (
 	"crypto/md5"
 )
 
-func MD5Slice(data []string) [16]byte {
-	temp := ""
-	for _, agr := range data {
-		temp += agr
+func MD5(data chan []string, ch chan<- [][16]byte) {
+	var s [][16]byte
+	for _, agr := range <-data {
+		h := md5.Sum([]byte(agr))
+		s = append(s, h)
+
 	}
-	h := md5.Sum([]byte(temp))
-	return h
-}
+	ch <- s
 
-func MD5String(data string) [16]byte {
-
-	h := md5.Sum([]byte(data))
-	return h
 }

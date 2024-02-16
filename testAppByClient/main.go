@@ -7,14 +7,12 @@ import (
 	"io"
 	"log"
 	"net/http"
-	"sort"
-	"strconv"
 )
 
 const (
 	CREATE     = "http://127.0.0.1:8080/aggregation_rule/create"
 	GET        = "http://127.0.0.1:8080/aggregation_rules/get"
-	COMPARABLE = "\n\n\n\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\"\",,,,,,,,,,,,,,,011122223333445::::::::::::AAAAAABBBNNNVVV[[[]]]aaaaaaaaaaaacccdddeeeeeeeeeeeeeeeeeeggggggggggggggggggiiilllmmmnnnooorrrrrrtttttttttuuuuuuyyy{{{}}}"
+	COMPARABLE = "{\"id\":1,\"Name\":\"Rule1\",\"AggregateBy\":[\"client_id\",\"payment_method_type\",\"payment_method_id\",\"currency\"],\"AggregateValue\":\"count\"}\n{\"id\":2,\"Name\":\"Reule2\",\"AggregateBy\":[\"client_id\",\"payment_method_type\",\"payment_method_id\"],\"AggregateValue\":\"amount\"}\n{\"id\":3,\"Name\":\"Reule3\",\"AggregateBy\":[\"client_id\",\"payment_method_type\",\"payment_method_id\",\"payment_id\"],\"AggregateValue\":\"amount\"}\n"
 )
 
 type rule struct {
@@ -24,23 +22,37 @@ type rule struct {
 	AggregateValue string   `json:"AggregateValue"`
 }
 
+func main() {
+	TestPostAndGetForRule()
+}
+
 func TestPostAndGetForRule() {
 	client := http.Client{} // Создаем клиента
 
-	for i := 0; i < 3; i++ { // Создаем правила в количестве 3 шт и постим на сервер
-		//r := rule{
-		//	Name:           strconv.Itoa(i),
-		//	AggregateBy:    []string{strconv.Itoa(i + 1), strconv.Itoa(i + 2), strconv.Itoa(i + 3)},
-		//	Amount:         i,
-		//	AggregateValue: "count",
-		//}
-
-		r := rule{
-			Name:           strconv.Itoa(i),
-			AggregateBy:    []string{"client_id", "payment_method_type", "payment_method_id"},
-			Amount:         i + 1000,
+	rules := []rule{
+		{
+			Name:           "Rule1",
+			AggregateBy:    []string{"client_id", "payment_method_type", "payment_method_id", "currency"},
+			Amount:         1000,
 			AggregateValue: "count",
-		}
+		},
+		{
+			Name:           "Reule2",
+			AggregateBy:    []string{"client_id", "payment_method_type", "payment_method_id"},
+			Amount:         2000,
+			AggregateValue: "amount",
+		},
+		{
+
+			Name:           "Reule3",
+			AggregateBy:    []string{"client_id", "payment_method_type", "payment_method_id", "payment_id"},
+			Amount:         4000,
+			AggregateValue: "amount",
+		},
+	}
+
+	for _, r := range rules { //   постим на сервер
+
 		jSON, _ := json.Marshal(&r)
 		req := bytes.NewReader(jSON)
 
@@ -60,18 +72,7 @@ func TestPostAndGetForRule() {
 	}
 	fmt.Println("Before sorting ", string(body))
 
-	sort.Slice(body, func(i, j int) bool { // Сортируем так как результат приходит рандомно из-за многопоточной реализации метода GET
-		return body[i] < body[j]
-	})
-
-	h := string(body)
-
-	if COMPARABLE != h { // Сравниваем результат
+	if COMPARABLE != string(body) { // Сравниваем результат
 		log.Fatalln("GET requests is not correct")
 	}
-}
-
-func main() {
-
-	TestPostAndGetForRule()
 }
