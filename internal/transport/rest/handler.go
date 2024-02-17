@@ -9,7 +9,7 @@ import (
 	"net/http"
 )
 
-func StartHandler() {
+func StartHandler() error {
 
 	const (
 		COUNT       = "/"
@@ -30,5 +30,5 @@ func StartHandler() {
 	r.Post(COUNT, s.CalculateTheAggregated)
 
 	log.Println("Star server on port " + *addr)
-	log.Fatal(http.ListenAndServe(*addr, r))
+	return http.ListenAndServe(*addr, r)
 }

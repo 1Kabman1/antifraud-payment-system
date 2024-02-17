@@ -18,7 +18,6 @@ const (
 type rule struct {
 	Name           string   `json:"Name"`
 	AggregateBy    []string `json:"AggregateBy"`
-	Amount         int      `json:"AggregatedValue"`
 	AggregateValue string   `json:"AggregateValue"`
 }
 
@@ -33,20 +32,17 @@ func TestPostAndGetForRule() {
 		{
 			Name:           "Rule1",
 			AggregateBy:    []string{"client_id", "payment_method_type", "payment_method_id", "currency"},
-			Amount:         1000,
 			AggregateValue: "count",
 		},
 		{
 			Name:           "Reule2",
 			AggregateBy:    []string{"client_id", "payment_method_type", "payment_method_id"},
-			Amount:         2000,
 			AggregateValue: "amount",
 		},
 		{
 
 			Name:           "Reule3",
 			AggregateBy:    []string{"client_id", "payment_method_type", "payment_method_id", "payment_id"},
-			Amount:         4000,
 			AggregateValue: "amount",
 		},
 	}

@@ -4,8 +4,8 @@ import (
 	"github.com/1Kabman1/Antifraud-payment-system.git/internal/transport/rest"
 )
 
-func StartAntifaud() {
+func StartAntifaud() error {
 
-	rest.StartHandler()
+	return rest.StartHandler()
 
 }
