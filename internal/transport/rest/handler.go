@@ -21,13 +21,14 @@ func StartHandler() error {
 	addr := flag.String("addr", PORT, "HTTP address")
 	flag.Parse()
 
-	s := services.NewStorage()
+	h := services.Handler{}
+	h.SetStorage()
 
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
-	r.Post(CREATE_RULE, s.CreateAggregationRule)
-	r.Get(GET_RULE, s.GetAggregationData)
-	r.Post(COUNT, s.CalculateTheAggregated)
+	r.Post(CREATE_RULE, h.CreateAggregationRule)
+	r.Get(GET_RULE, h.GetAggregationData)
+	r.Post(COUNT, h.CalculateTheAggregated)
 
 	log.Println("Star server on port " + *addr)
 	return http.ListenAndServe(*addr, r)

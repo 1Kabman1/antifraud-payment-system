@@ -2,14 +2,24 @@ package services
 
 import (
 	"encoding/json"
+	"github.com/1Kabman1/Antifraud-payment-system.git/internal/database"
 	"net/http"
 	"strconv"
 	"strings"
 	"sync"
 )
 
-func (s *Storage) GetAggregationData(w http.ResponseWriter, _ *http.Request) {
-	if len(s.rules) == 0 {
+type Handler struct {
+	s database.Storage
+}
+
+func (h *Handler) SetStorage() {
+	h.s = database.NewStorage()
+
+}
+
+func (h *Handler) GetAggregationData(w http.ResponseWriter, _ *http.Request) {
+	if h.s.GetRulesLen() == 0 {
 		http.Error(w, "The rules don't exist yet", http.StatusInternalServerError)
 		return
 	}
@@ -17,7 +27,7 @@ func (s *Storage) GetAggregationData(w http.ResponseWriter, _ *http.Request) {
 	w.Header().Set("Status", "success")
 	w.Header().Set("Content-Type", "application/json")
 
-	for _, aRule := range s.rules {
+	for _, aRule := range h.s.GetRules() {
 
 		ruleJson, err := json.Marshal(aRule)
 		if err != nil {
@@ -38,7 +48,7 @@ func (s *Storage) GetAggregationData(w http.ResponseWriter, _ *http.Request) {
 	}
 }
 
-func (s *Storage) CreateAggregationRule(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) CreateAggregationRule(w http.ResponseWriter, r *http.Request) {
 
 	aRule := newRule()
 
@@ -51,24 +61,23 @@ func (s *Storage) CreateAggregationRule(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	_, ok := s.rules[aRule.Name]
-
-	if ok {
+	if h.s.IsRule(aRule.Name) {
 		w.Header().Set("Message", "rule already exists")
 		w.Header().Set("Status", " error "+strconv.Itoa(http.StatusConflict))
 
 	} else {
-		s.idRules++
-		aRule.AggregationRuleId = s.idRules
-		s.rules[aRule.Name] = aRule
-		w.Header().Set("Message", "rule "+strconv.Itoa(s.idRules)+" created")
+		id := h.s.GetId()
+		aRule.AggregationRuleId = id
+		h.s.SetRule(aRule.Name, aRule)
+		w.Header().Set("Message", "rule "+strconv.Itoa(id)+" created")
 		w.Header().Set("Status", "success")
+
 	}
 
 }
 
-func (s *Storage) CalculateTheAggregated(w http.ResponseWriter, r *http.Request) {
-	if len(s.rules) == 0 {
+func (h *Handler) CalculateTheAggregated(w http.ResponseWriter, r *http.Request) {
+	if h.s.GetRulesLen() == 0 {
 		http.Error(w, "The rules don't exist yet", http.StatusInternalServerError)
 		return
 	}
@@ -91,10 +100,10 @@ func (s *Storage) CalculateTheAggregated(w http.ResponseWriter, r *http.Request)
 
 	go func() {
 
-		aggregatesBy := make(map[string]string, len(s.rules))
+		aggregatesBy := make(map[string]string, h.s.GetRulesLen())
 
-		for key, aRule := range s.rules {
-
+		for _, tempRule := range h.s.GetRules() {
+			aRule := tempRule.(rule)
 			for _, agg := range aRule.AggregateBy {
 				if v, ok := mapPING[agg]; ok {
 					switch aInterface := v.(type) {
@@ -104,10 +113,11 @@ func (s *Storage) CalculateTheAggregated(w http.ResponseWriter, r *http.Request)
 						aBuilder.WriteString(aInterface)
 					}
 					aggregate := aBuilder.String()
-					aggregatesBy[key] = aggregate
+					aggregatesBy[aRule.Name] = aggregate
 					aBuilder.Reset()
 				}
 			}
+
 		}
 		chan1 <- aggregatesBy
 	}()
@@ -121,23 +131,28 @@ func (s *Storage) CalculateTheAggregated(w http.ResponseWriter, r *http.Request)
 		defer ws.Done()
 
 		for nameRule, keyCounter := range <-chan2 {
+			tempRule := h.s.GetRule(nameRule)
+			aRule := tempRule.(rule)
 
-			if c, ok := s.counters[keyCounter]; ok {
-				if s.rules[nameRule].AggregateValue == "count" {
-					c.count++
+			if h.s.IsCounter(keyCounter) {
+				tempCounter := h.s.GetCounter(keyCounter)
+				aCounter := tempCounter.(counter)
+
+				if aRule.AggregateValue == "count" {
+					aCounter.count++
 				} else {
-					c.amount += mapPING["amount"].(float64)
+					aCounter.amount += mapPING["amount"].(float64)
 				}
 			} else {
 				aNewCounter := newCounter()
-				if s.rules[nameRule].AggregateValue == "amount" {
+				if aRule.AggregateValue == "amount" {
 					aNewCounter.amount = mapPING["amount"].(float64)
 				} else {
 					aNewCounter.count++
 				}
-				s.idCounters++
-				aNewCounter.id = s.idCounters
-				s.counters[keyCounter] = aNewCounter
+
+				aNewCounter.id = h.s.GetIdCounter()
+				h.s.SetIdCounter(keyCounter, aNewCounter)
 			}
 		}
 	}()

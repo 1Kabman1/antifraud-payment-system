@@ -68,7 +68,10 @@ func TestPostAndGetForRule() {
 	}
 	fmt.Println("Before sorting ", string(body))
 
-	if COMPARABLE != string(body) { // Сравниваем результат
+	g := string(body)
+	fmt.Println(g)
+
+	if COMPARABLE != g { // Сравниваем результат
 		log.Fatalln("GET requests is not correct")
 	}
 }
