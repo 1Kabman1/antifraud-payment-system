@@ -6,6 +6,6 @@ type counter struct {
 	amount float64
 }
 
-func newCounter() *counter {
-	return &counter{}
+func newCounter() counter {
+	return counter{}
 }

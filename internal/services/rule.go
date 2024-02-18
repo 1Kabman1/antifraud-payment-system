@@ -6,3 +6,7 @@ type rule struct {
 	AggregateBy       []string `json:"AggregateBy"`
 	AggregateValue    string   `json:"AggregateValue"`
 }
+
+func newRule() rule {
+	return rule{}
+}

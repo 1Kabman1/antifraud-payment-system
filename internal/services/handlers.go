@@ -40,7 +40,7 @@ func (s *Storage) GetAggregationData(w http.ResponseWriter, _ *http.Request) {
 
 func (s *Storage) CreateAggregationRule(w http.ResponseWriter, r *http.Request) {
 
-	aRule := new(rule)
+	aRule := newRule()
 
 	if r.Body != nil {
 		defer r.Body.Close()
