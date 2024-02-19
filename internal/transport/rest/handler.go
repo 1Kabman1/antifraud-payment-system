@@ -12,23 +12,23 @@ import (
 func StartHandler() error {
 
 	const (
-		COUNT       = "/"
-		CREATE_RULE = "/aggregation_rule/create"
-		GET_RULE    = "/aggregation_rules/get"
-		PORT        = ":8080"
+		Count      = "/"
+		CreateRule = "/aggregation_rule/create"
+		GetRule    = "/aggregation_rules/get"
+		Port       = ":8080"
 	)
 
-	addr := flag.String("addr", PORT, "HTTP address")
+	addr := flag.String("addr", Port, "HTTP address")
 	flag.Parse()
 
-	h := services.Handler{}
+	h := services.Handlers{}
 	h.SetStorage()
 
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
-	r.Post(CREATE_RULE, h.CreateAggregationRule)
-	r.Get(GET_RULE, h.GetAggregationData)
-	r.Post(COUNT, h.CalculateTheAggregated)
+	r.Post(CreateRule, h.CreateAggregationRule)
+	r.Get(GetRule, h.AggregationData)
+	r.Post(Count, h.CalculateTheAggregated)
 
 	log.Println("Star server on port " + *addr)
 	return http.ListenAndServe(*addr, r)

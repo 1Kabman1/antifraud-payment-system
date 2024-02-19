@@ -4,6 +4,7 @@ import (
 	"crypto/md5"
 )
 
+// MD5 - hash function
 func MD5(data chan map[string]string, ch chan<- map[string][16]byte) {
 	result := make(map[string][16]byte)
 

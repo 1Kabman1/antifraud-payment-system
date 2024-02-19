@@ -9,17 +9,18 @@ import (
 	"sync"
 )
 
-type Handler struct {
+type Handlers struct {
 	s database.Storage
 }
 
-func (h *Handler) SetStorage() {
+func (h *Handlers) SetStorage() {
 	h.s = database.NewStorage()
 
 }
 
-func (h *Handler) GetAggregationData(w http.ResponseWriter, _ *http.Request) {
-	if h.s.GetRulesLen() == 0 {
+// AggregationData - Get aggregation data
+func (h *Handlers) AggregationData(w http.ResponseWriter, _ *http.Request) {
+	if h.s.RulesLen() == 0 {
 		http.Error(w, "The rules don't exist yet", http.StatusInternalServerError)
 		return
 	}
@@ -27,7 +28,7 @@ func (h *Handler) GetAggregationData(w http.ResponseWriter, _ *http.Request) {
 	w.Header().Set("Status", "success")
 	w.Header().Set("Content-Type", "application/json")
 
-	for _, aRule := range h.s.GetRules() {
+	for _, aRule := range h.s.Rules() {
 
 		ruleJson, err := json.Marshal(aRule)
 		if err != nil {
@@ -48,7 +49,8 @@ func (h *Handler) GetAggregationData(w http.ResponseWriter, _ *http.Request) {
 	}
 }
 
-func (h *Handler) CreateAggregationRule(w http.ResponseWriter, r *http.Request) {
+// CreateAggregationRule - create aggregation rule
+func (h *Handlers) CreateAggregationRule(w http.ResponseWriter, r *http.Request) {
 
 	aRule := newRule()
 
@@ -66,7 +68,7 @@ func (h *Handler) CreateAggregationRule(w http.ResponseWriter, r *http.Request) 
 		w.Header().Set("Status", " error "+strconv.Itoa(http.StatusConflict))
 
 	} else {
-		id := h.s.GetId()
+		id := h.s.IdRules()
 		aRule.AggregationRuleId = id
 		h.s.SetRule(aRule.Name, aRule)
 		w.Header().Set("Message", "rule "+strconv.Itoa(id)+" created")
@@ -76,8 +78,9 @@ func (h *Handler) CreateAggregationRule(w http.ResponseWriter, r *http.Request) 
 
 }
 
-func (h *Handler) CalculateTheAggregated(w http.ResponseWriter, r *http.Request) {
-	if h.s.GetRulesLen() == 0 {
+// CalculateTheAggregated - counts aggregated based on the rules
+func (h *Handlers) CalculateTheAggregated(w http.ResponseWriter, r *http.Request) {
+	if h.s.RulesLen() == 0 {
 		http.Error(w, "The rules don't exist yet", http.StatusInternalServerError)
 		return
 	}
@@ -100,9 +103,9 @@ func (h *Handler) CalculateTheAggregated(w http.ResponseWriter, r *http.Request)
 
 	go func() {
 
-		aggregatesBy := make(map[string]string, h.s.GetRulesLen())
+		aggregatesBy := make(map[string]string, h.s.RulesLen())
 
-		for _, tempRule := range h.s.GetRules() {
+		for _, tempRule := range h.s.Rules() {
 			aRule := tempRule.(rule)
 			for _, agg := range aRule.AggregateBy {
 				if v, ok := mapPING[agg]; ok {
@@ -131,11 +134,11 @@ func (h *Handler) CalculateTheAggregated(w http.ResponseWriter, r *http.Request)
 		defer ws.Done()
 
 		for nameRule, keyCounter := range <-chan2 {
-			tempRule := h.s.GetRule(nameRule)
+			tempRule := h.s.Rule(nameRule)
 			aRule := tempRule.(rule)
 
 			if h.s.IsCounter(keyCounter) {
-				tempCounter := h.s.GetCounter(keyCounter)
+				tempCounter := h.s.Counter(keyCounter)
 				aCounter := tempCounter.(counter)
 
 				if aRule.AggregateValue == "count" {
@@ -151,7 +154,7 @@ func (h *Handler) CalculateTheAggregated(w http.ResponseWriter, r *http.Request)
 					aNewCounter.count++
 				}
 
-				aNewCounter.id = h.s.GetIdCounter()
+				aNewCounter.id = h.s.IdCounter()
 				h.s.SetIdCounter(keyCounter, aNewCounter)
 			}
 		}

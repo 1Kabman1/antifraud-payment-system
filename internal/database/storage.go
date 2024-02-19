@@ -1,32 +1,38 @@
 package database
 
 type Storage struct {
-	idRules    int
-	idCounters int
-	rules      map[string]interface{}
-	counters   map[[16]byte]interface{}
+	idRules   int
+	idCounter int
+	rules     map[string]interface{}
+	counter   map[[16]byte]interface{}
 }
 
+// NewStorage - create a Storage
 func NewStorage() Storage {
 	return Storage{
-		rules:    make(map[string]interface{}),
-		counters: make(map[[16]byte]interface{}),
+		rules:   make(map[string]interface{}),
+		counter: make(map[[16]byte]interface{}),
 	}
 }
+
+// SetRule - adds rule in map
 func (s *Storage) SetRule(key string, rule interface{}) {
 	s.rules[key] = rule
 }
 
-func (s *Storage) GetRulesLen() int {
+// RuleLen - returns the length of the map
+func (s *Storage) RulesLen() int {
 	return len(s.rules)
 }
 
-func (s *Storage) GetRules() map[string]interface{} {
+// Rules - returns rules
+func (s *Storage) Rules() map[string]interface{} {
 
 	return s.rules
 }
 
-func (s *Storage) GetRule(key string) interface{} {
+// Rule - returns a rule
+func (s *Storage) Rule(key string) interface{} {
 	return s.rules[key]
 }
 
@@ -35,27 +41,32 @@ func (s *Storage) IsRule(key string) bool {
 	return ok
 }
 
-func (s *Storage) GetId() int {
+// IdRules - adds by 1 id and returns
+func (s *Storage) IdRules() int {
 	s.idRules++
 	return s.idRules
 }
 
+// IsCounter - Checks if there is a value in the map
 func (s *Storage) IsCounter(key [16]byte) bool {
-	_, ok := s.counters[key]
+	_, ok := s.counter[key]
 	return ok
 }
 
+// SetIdCounter - sets id for c
 func (s *Storage) SetIdCounter(key [16]byte, v interface{}) {
-	s.counters[key] = v
+	s.counter[key] = v
 
 }
 
-func (s *Storage) GetCounter(key [16]byte) interface{} {
-	return s.counters[key]
+// Counter - return Counter
+func (s *Storage) Counter(key [16]byte) interface{} {
+	return s.counter[key]
 }
 
-func (s *Storage) GetIdCounter() int {
-	s.idCounters++
+// IdCounter - return id metre
+func (s *Storage) IdCounter() int {
+	s.idCounter++
 
-	return s.idCounters
+	return s.idCounter
 }

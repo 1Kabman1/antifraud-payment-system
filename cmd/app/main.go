@@ -6,6 +6,7 @@ import (
 )
 
 func main() {
+
 	err := antifraud.StartAntifaud()
 	if err != nil {
 		log.Fatalln(err)
