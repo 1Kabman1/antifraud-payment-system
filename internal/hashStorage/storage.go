@@ -1,4 +1,6 @@
-package database
+package hashStorage
+
+import "errors"
 
 type Storage struct {
 	idRules   int
@@ -27,13 +29,19 @@ func (s *Storage) RulesLen() int {
 
 // Rules - returns rules
 func (s *Storage) Rules() map[string]interface{} {
-
 	return s.rules
 }
 
 // Rule - returns a rule
-func (s *Storage) Rule(key string) interface{} {
-	return s.rules[key]
+func (s *Storage) Rule(key string) (error, interface{}) {
+	err := errors.New("Key is not correct")
+
+	_, ok := s.rules[key]
+	if ok {
+		return nil, s.rules[key]
+	}
+
+	return err, nil
 }
 
 func (s *Storage) IsRule(key string) bool {
@@ -60,13 +68,18 @@ func (s *Storage) SetIdCounter(key [16]byte, v interface{}) {
 }
 
 // Counter - return Counter
-func (s *Storage) Counter(key [16]byte) interface{} {
-	return s.counter[key]
+func (s *Storage) Counter(key [16]byte) (error, interface{}) {
+	err := errors.New("Key is not correct")
+
+	_, ok := s.counter[key]
+	if ok {
+		return nil, s.counter[key]
+	}
+	return err, nil
 }
 
 // IdCounter - return id metre
 func (s *Storage) IdCounter() int {
 	s.idCounter++
-
 	return s.idCounter
 }

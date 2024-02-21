@@ -2,26 +2,32 @@ package services
 
 import (
 	"encoding/json"
-	"github.com/1Kabman1/Antifraud-payment-system.git/internal/database"
+	"github.com/1Kabman1/Antifraud-payment-system.git/internal/hashStorage"
+	"log"
 	"net/http"
+	"os"
 	"strconv"
 	"strings"
 	"sync"
 )
 
 type Handlers struct {
-	s database.Storage
+	s        hashStorage.Storage
+	errorLog *log.Logger
+	infoLog  *log.Logger
 }
 
 func (h *Handlers) SetStorage() {
-	h.s = database.NewStorage()
-
+	h.s = hashStorage.NewStorage()
+	h.errorLog = log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
+	h.infoLog = log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
 }
 
 // AggregationData - Get aggregation data
 func (h *Handlers) AggregationData(w http.ResponseWriter, _ *http.Request) {
 	if h.s.RulesLen() == 0 {
 		http.Error(w, "The rules don't exist yet", http.StatusInternalServerError)
+		h.errorLog.Println("The rules don't exist yet")
 		return
 	}
 
@@ -33,6 +39,7 @@ func (h *Handlers) AggregationData(w http.ResponseWriter, _ *http.Request) {
 		ruleJson, err := json.Marshal(aRule)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
+			h.errorLog.Println(err)
 			return
 		}
 
@@ -43,6 +50,7 @@ func (h *Handlers) AggregationData(w http.ResponseWriter, _ *http.Request) {
 
 		if _, err := w.Write([]byte("\n")); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
+			h.errorLog.Println(err)
 			return
 		}
 
@@ -60,6 +68,7 @@ func (h *Handlers) CreateAggregationRule(w http.ResponseWriter, r *http.Request)
 
 	if err := json.NewDecoder(r.Body).Decode(&aRule); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+		h.errorLog.Println(err)
 		return
 	}
 
@@ -82,6 +91,7 @@ func (h *Handlers) CreateAggregationRule(w http.ResponseWriter, r *http.Request)
 func (h *Handlers) CalculateTheAggregated(w http.ResponseWriter, r *http.Request) {
 	if h.s.RulesLen() == 0 {
 		http.Error(w, "The rules don't exist yet", http.StatusInternalServerError)
+		h.errorLog.Println("The rules don't exist yet")
 		return
 	}
 
@@ -94,6 +104,7 @@ func (h *Handlers) CalculateTheAggregated(w http.ResponseWriter, r *http.Request
 
 	if err := json.NewDecoder(r.Body).Decode(&mapPING); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+		h.errorLog.Println(err.Error())
 		return
 	}
 
@@ -111,9 +122,15 @@ func (h *Handlers) CalculateTheAggregated(w http.ResponseWriter, r *http.Request
 				if v, ok := mapPING[agg]; ok {
 					switch aInterface := v.(type) {
 					case float64:
-						aBuilder.WriteString(strconv.FormatFloat(aInterface, 'E', -1, 64))
+						_, err := aBuilder.WriteString(strconv.FormatFloat(aInterface, 'E', -1, 64))
+						if err != nil {
+							h.errorLog.Println("the type is not float")
+						}
 					case string:
-						aBuilder.WriteString(aInterface)
+						_, err := aBuilder.WriteString(aInterface)
+						if err != nil {
+							h.errorLog.Println("the type is not string")
+						}
 					}
 					aggregate := aBuilder.String()
 					aggregatesBy[aRule.Name] = aggregate
@@ -134,11 +151,21 @@ func (h *Handlers) CalculateTheAggregated(w http.ResponseWriter, r *http.Request
 		defer ws.Done()
 
 		for nameRule, keyCounter := range <-chan2 {
-			tempRule := h.s.Rule(nameRule)
+			err, tempRule := h.s.Rule(nameRule)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				h.errorLog.Println(err)
+				return
+			}
 			aRule := tempRule.(rule)
 
 			if h.s.IsCounter(keyCounter) {
-				tempCounter := h.s.Counter(keyCounter)
+				err, tempCounter := h.s.Counter(keyCounter)
+				if err != nil {
+					http.Error(w, err.Error(), http.StatusInternalServerError)
+					h.errorLog.Println(err)
+					return
+				}
 				aCounter := tempCounter.(counter)
 
 				if aRule.AggregateValue == "count" {
