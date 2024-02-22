@@ -1,9 +1,10 @@
 package services
 
-type counter struct {
-	id     int
-	count  int
-	amount float64
+type counter struct { // пока оставить
+	//id     int // не обязательно
+	//count  int //
+	//amount int // value always int
+	value int
 }
 
 func newCounter() counter {

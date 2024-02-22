@@ -12,10 +12,10 @@ import (
 func StartHandler() error {
 
 	const (
-		Count      = "/"
-		CreateRule = "/aggregation_rule/create"
-		GetRule    = "/aggregation_rules/get"
-		Port       = ":8080"
+		registerOperation = "/register"
+		CreateRule        = "/aggregation_rule/create"
+		GetRule           = "/aggregation_rules/get"
+		Port              = ":8080"
 	)
 
 	addr := flag.String("addr", Port, "HTTP address")
@@ -28,7 +28,7 @@ func StartHandler() error {
 	r.Use(middleware.Logger)
 	r.Post(CreateRule, h.CreateAggregationRule)
 	r.Get(GetRule, h.AggregationData)
-	r.Post(Count, h.CalculateTheAggregated)
+	r.Post(registerOperation, h.CalculateTheAggregated)
 
 	log.Println("Star server on port " + *addr)
 	return http.ListenAndServe(*addr, r)

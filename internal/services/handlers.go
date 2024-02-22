@@ -7,8 +7,6 @@ import (
 	"net/http"
 	"os"
 	"strconv"
-	"strings"
-	"sync"
 )
 
 type Handlers struct {
@@ -17,6 +15,7 @@ type Handlers struct {
 	infoLog  *log.Logger
 }
 
+// SetStorage - set storage and logs
 func (h *Handlers) SetStorage() {
 	h.s = hashStorage.NewStorage()
 	h.errorLog = log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
@@ -27,7 +26,6 @@ func (h *Handlers) SetStorage() {
 func (h *Handlers) AggregationData(w http.ResponseWriter, _ *http.Request) {
 	if h.s.RulesLen() == 0 {
 		http.Error(w, "The rules don't exist yet", http.StatusInternalServerError)
-		h.errorLog.Println("The rules don't exist yet")
 		return
 	}
 
@@ -77,7 +75,7 @@ func (h *Handlers) CreateAggregationRule(w http.ResponseWriter, r *http.Request)
 		w.Header().Set("Status", " error "+strconv.Itoa(http.StatusConflict))
 
 	} else {
-		id := h.s.IdRules()
+		id := h.s.RulesLen() + 1
 		aRule.AggregationRuleId = id
 		h.s.SetRule(aRule.Name, aRule)
 		w.Header().Set("Message", "rule "+strconv.Itoa(id)+" created")
@@ -91,11 +89,9 @@ func (h *Handlers) CreateAggregationRule(w http.ResponseWriter, r *http.Request)
 func (h *Handlers) CalculateTheAggregated(w http.ResponseWriter, r *http.Request) {
 	if h.s.RulesLen() == 0 {
 		http.Error(w, "The rules don't exist yet", http.StatusInternalServerError)
-		h.errorLog.Println("The rules don't exist yet")
 		return
 	}
 
-	var aBuilder strings.Builder
 	mapPING := map[string]interface{}{}
 
 	if r.Body != nil {
@@ -108,86 +104,46 @@ func (h *Handlers) CalculateTheAggregated(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	ws := sync.WaitGroup{}
-	chan1 := make(chan map[string]string)
-	chan2 := make(chan map[string][16]byte)
+	aggregatesBy, err := prepareTheDataForHashing(h.s.Rules(), mapPING)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		h.errorLog.Println(err)
+		return
+	}
 
-	go func() {
-
-		aggregatesBy := make(map[string]string, h.s.RulesLen())
-
-		for _, tempRule := range h.s.Rules() {
-			aRule := tempRule.(rule)
-			for _, agg := range aRule.AggregateBy {
-				if v, ok := mapPING[agg]; ok {
-					switch aInterface := v.(type) {
-					case float64:
-						_, err := aBuilder.WriteString(strconv.FormatFloat(aInterface, 'E', -1, 64))
-						if err != nil {
-							h.errorLog.Println("the type is not float")
-						}
-					case string:
-						_, err := aBuilder.WriteString(aInterface)
-						if err != nil {
-							h.errorLog.Println("the type is not string")
-						}
-					}
-					aggregate := aBuilder.String()
-					aggregatesBy[aRule.Name] = aggregate
-					aBuilder.Reset()
-				}
-			}
-
+	for nameRule, keyCounter := range calculateHash(aggregatesBy) {
+		err, tempRule := h.s.Rule(nameRule)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			h.errorLog.Println(err)
+			return
 		}
-		chan1 <- aggregatesBy
-	}()
+		aRule := tempRule.(rule)
 
-	go func() {
-		MD5(chan1, chan2)
-	}()
-
-	ws.Add(1)
-	go func() {
-		defer ws.Done()
-
-		for nameRule, keyCounter := range <-chan2 {
-			err, tempRule := h.s.Rule(nameRule)
+		if h.s.IsCounter(keyCounter) {
+			err, tempCounter := h.s.Counter(keyCounter)
 			if err != nil {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 				h.errorLog.Println(err)
 				return
 			}
-			aRule := tempRule.(rule)
+			aCounter := tempCounter.(counter)
 
-			if h.s.IsCounter(keyCounter) {
-				err, tempCounter := h.s.Counter(keyCounter)
-				if err != nil {
-					http.Error(w, err.Error(), http.StatusInternalServerError)
-					h.errorLog.Println(err)
-					return
-				}
-				aCounter := tempCounter.(counter)
-
-				if aRule.AggregateValue == "count" {
-					aCounter.count++
-				} else {
-					aCounter.amount += mapPING["amount"].(float64)
-				}
+			if aRule.AggregateValue == "count" {
+				aCounter.value++
 			} else {
-				aNewCounter := newCounter()
-				if aRule.AggregateValue == "amount" {
-					aNewCounter.amount = mapPING["amount"].(float64)
-				} else {
-					aNewCounter.count++
-				}
-
-				aNewCounter.id = h.s.IdCounter()
-				h.s.SetIdCounter(keyCounter, aNewCounter)
+				aCounter.value += int(mapPING["amount"].(float64))
 			}
-		}
-	}()
+		} else {
+			aNewCounter := newCounter()
+			if aRule.AggregateValue == "amount" {
+				aNewCounter.value = int(mapPING["amount"].(float64))
+			} else {
+				aNewCounter.value++
+			}
 
-	ws.Wait()
-	close(chan2)
-	close(chan1)
+			h.s.SetIdCounter(keyCounter, aNewCounter)
+		}
+	}
+
 }

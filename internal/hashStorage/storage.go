@@ -3,10 +3,10 @@ package hashStorage
 import "errors"
 
 type Storage struct {
-	idRules   int
-	idCounter int
-	rules     map[string]interface{}
-	counter   map[[16]byte]interface{}
+	//idRules   int //
+	//idCounter int //
+	rules   map[string]interface{}
+	counter map[[16]byte]interface{}
 }
 
 // NewStorage - create a Storage
@@ -17,7 +17,7 @@ func NewStorage() Storage {
 	}
 }
 
-// SetRule - adds rule in map
+// SetRule - set rule in map
 func (s *Storage) SetRule(key string, rule interface{}) {
 	s.rules[key] = rule
 }
@@ -49,11 +49,11 @@ func (s *Storage) IsRule(key string) bool {
 	return ok
 }
 
-// IdRules - adds by 1 id and returns
-func (s *Storage) IdRules() int {
-	s.idRules++
-	return s.idRules
-}
+//// IdRules - adds by 1 id and returns
+//func (s *Storage) IdRules() int { // delete
+//	s.idRules++
+//	return s.idRules
+//}
 
 // IsCounter - Checks if there is a value in the map
 func (s *Storage) IsCounter(key [16]byte) bool {
@@ -78,8 +78,12 @@ func (s *Storage) Counter(key [16]byte) (error, interface{}) {
 	return err, nil
 }
 
-// IdCounter - return id metre
-func (s *Storage) IdCounter() int {
-	s.idCounter++
-	return s.idCounter
-}
+//func (s *Storage) CounterLen()int {
+//	return len(s.counter)
+//}
+
+//// IdCounter - return id metre
+//func (s *Storage) IdCounter() int {
+//	s.idCounter++
+//	return s.idCounter
+//}
