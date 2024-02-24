@@ -8,7 +8,7 @@ import (
 )
 
 // calculateHash - hash function
-func calculateHash(data map[string]string) map[string][16]byte { // delete goruten
+func calculateHash(data map[string]string) map[string][16]byte {
 	result := make(map[string][16]byte)
 
 	for key, val := range data {

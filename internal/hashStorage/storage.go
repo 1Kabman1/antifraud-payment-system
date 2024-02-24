@@ -3,10 +3,9 @@ package hashStorage
 import "errors"
 
 type Storage struct {
-	//idRules   int //
-	//idCounter int //
-	rules   map[string]interface{}
-	counter map[[16]byte]interface{}
+	rules     map[string]interface{}
+	counter   map[[16]byte]interface{}
+	archivist map[int]int
 }
 
 // NewStorage - create a Storage
@@ -49,20 +48,14 @@ func (s *Storage) IsRule(key string) bool {
 	return ok
 }
 
-//// IdRules - adds by 1 id and returns
-//func (s *Storage) IdRules() int { // delete
-//	s.idRules++
-//	return s.idRules
-//}
-
 // IsCounter - Checks if there is a value in the map
 func (s *Storage) IsCounter(key [16]byte) bool {
 	_, ok := s.counter[key]
 	return ok
 }
 
-// SetIdCounter - sets id for c
-func (s *Storage) SetIdCounter(key [16]byte, v interface{}) {
+// SetCounter - sets id for c
+func (s *Storage) SetCounter(key [16]byte, v interface{}) {
 	s.counter[key] = v
 
 }
@@ -78,12 +71,12 @@ func (s *Storage) Counter(key [16]byte) (error, interface{}) {
 	return err, nil
 }
 
-//func (s *Storage) CounterLen()int {
-//	return len(s.counter)
-//}
+// CounterLen - return len
+func (s *Storage) CounterLen() int {
+	return len(s.counter)
+}
 
-//// IdCounter - return id metre
-//func (s *Storage) IdCounter() int {
-//	s.idCounter++
-//	return s.idCounter
-//}
+// AddToArchivist - filled in by the archivist
+func (s *Storage) AddToArchivist(idRule, idCounter int) {
+	s.archivist[idRule] = idCounter
+}

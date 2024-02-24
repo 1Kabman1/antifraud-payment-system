@@ -141,8 +141,10 @@ func (h *Handlers) CalculateTheAggregated(w http.ResponseWriter, r *http.Request
 			} else {
 				aNewCounter.value++
 			}
-
-			h.s.SetIdCounter(keyCounter, aNewCounter)
+			idCounter := h.s.CounterLen() + 1
+			aNewCounter.id = idCounter
+			h.s.SetCounter(keyCounter, aNewCounter)
+			h.s.AddToArchivist(aRule.AggregationRuleId, idCounter)
 		}
 	}
 
