@@ -21,7 +21,7 @@ func (s *Storage) SetRule(key string, rule interface{}) {
 	s.rules[key] = rule
 }
 
-// RuleLen - returns the length of the map
+// RulesLen - returns the length of the map
 func (s *Storage) RulesLen() int {
 	return len(s.rules)
 }
@@ -43,6 +43,7 @@ func (s *Storage) Rule(key string) (error, interface{}) {
 	return err, nil
 }
 
+// IsRule - return bool
 func (s *Storage) IsRule(key string) bool {
 	_, ok := s.rules[key]
 	return ok

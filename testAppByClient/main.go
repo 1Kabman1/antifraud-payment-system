@@ -25,6 +25,7 @@ func main() {
 	TestPostAndGetForRule()
 }
 
+// TestPostAndGetForRule - Tests adding and receiving rules
 func TestPostAndGetForRule() {
 	client := http.Client{} // Создаем клиента
 

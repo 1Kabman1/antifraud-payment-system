@@ -6,10 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="cb2d5794-c146-4506-87d0-a61258f7519a" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/services/rule.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/services/rule.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/transport/rest/handlers.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/transport/rest/handlers.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/testAppByClient/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/testAppByClient/main.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -26,6 +22,9 @@
   <component name="GOROOT" url="file:///usr/local/go" />
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/testAppByClient/main.go" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -48,9 +47,9 @@
     "RunOnceActivity.go.modules.automatic.dependencies.download": "true",
     "RunOnceActivity.go.modules.go.list.on.any.changes.was.set": "true",
     "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "Merging correct-solution",
+    "git-widget-placeholder": "payment",
     "go.import.settings.migrated": "true",
-    "last_opened_file_path": "/home/kabman/GolandProjects/Example/exampl",
+    "last_opened_file_path": "/home/kabman/GolandProjects/Antifraud-payment-system",
     "node.js.detected.package.eslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
@@ -62,11 +61,11 @@
       <recent name="$PROJECT_DIR$/cmd/app" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/internal/transport/rest" />
-      <recent name="$PROJECT_DIR$" />
-      <recent name="$PROJECT_DIR$/pkg" />
-      <recent name="$PROJECT_DIR$/cmd/app" />
+      <recent name="$PROJECT_DIR$/internal/hashStorage" />
+      <recent name="$PROJECT_DIR$/internal/database" />
       <recent name="$PROJECT_DIR$/internal/services" />
+      <recent name="$PROJECT_DIR$/pkg" />
+      <recent name="$PROJECT_DIR$/internal/transport/rest" />
     </key>
   </component>
   <component name="RunManager" selected="Go Build.go build main.go">
@@ -134,5 +133,12 @@
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>
+  </component>
+  <component name="XDebuggerManager">
+    <watches-manager>
+      <configuration name="GoApplicationRunConfiguration">
+        <watch expression="*(*&quot;int&quot;)(824635908224)" />
+      </configuration>
+    </watches-manager>
   </component>
 </project>

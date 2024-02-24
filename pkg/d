@@ -1,0 +1,55 @@
+package services
+
+type Assignment struct {
+	PaymentId         int    `json:"payment_id"`
+	ClientId          string `json:"client_id"`
+	PaymentMethodType string `json:"payment_method_type"`
+	PaymentMethodId   string `json:"payment_method_id"`
+	Amount            int    `json:"amount"`
+	Currency          string `json:"currency"`
+}
+
+func NewPayment() *Assignment {
+	return &Assignment{}
+}
+
+
+
+func (s *database.StorageRules) CheckAssignment(w http.ResponseWriter, r *http.Request) {
+
+	defer r.Body.Close()
+
+	p := serv.NewPayment()
+
+	err := json.NewDecoder(r.Body).Decode(&p)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	bul := strings.Builder{}
+
+	for _, rule := range s.rules {
+
+		for _, agg := range rule.AggregateBy {
+
+			switch agg {
+			case "payment_id":
+				bul.WriteString(strconv.Itoa(p.PaymentId))
+			case "client_id":
+				bul.WriteString(p.ClientId)
+			case "payment_method_type":
+				bul.WriteString(p.PaymentMethodType)
+			case "payment_method_id":
+				bul.WriteString(p.PaymentMethodId)
+			case "amount":
+				bul.WriteString(strconv.Itoa(p.Amount))
+			case "currency":
+				bul.WriteString(p.Currency)
+			}
+
+		}
+
+	}
+
+}
