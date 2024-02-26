@@ -25,7 +25,7 @@ func TestPrepareTheDataForHashing(t *testing.T) {
 	rules["rules2"] = rule2
 
 	payments := map[string]interface{}{}
-	payments["a"] = 1234
+	payments["a"] = 1234.00
 	payments["b"] = "2"
 	payments["c"] = "1234"
 	payments["d"] = "2"

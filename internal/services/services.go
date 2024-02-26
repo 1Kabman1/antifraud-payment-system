@@ -29,19 +29,14 @@ func prepareTheDataForHashing(h, mapPING map[string]interface{}) (map[string]str
 
 		aRule := tempRule.(rule)
 		aggregate := ""
-		flag := true
+		var flag bool
 
 		for _, agg := range aRule.AggregateBy {
 			if v, ok := mapPING[agg]; ok {
 				switch aInterface := v.(type) {
-				case int:
-					_, err := aBuilder.WriteString(strconv.Itoa(aInterface))
-					if err != nil {
-						return nil, errors.New("the type is not float")
-					}
-					aBuilder.WriteString(agg)
 				case float64:
-					_, err := aBuilder.WriteString(strconv.FormatFloat(aInterface, 'E', -1, 64))
+					intInterface := int(aInterface)
+					_, err := aBuilder.WriteString(strconv.Itoa(intInterface))
 					if err != nil {
 						return nil, errors.New("the type is not float")
 					}
@@ -55,14 +50,14 @@ func prepareTheDataForHashing(h, mapPING map[string]interface{}) (map[string]str
 				}
 
 			} else { // Если хотябы одно агрегируемое из правила не совпадает с поступившим на почет поручением, то оно автоматом исключается
-				flag = false
+				flag = true
 				aBuilder.Reset()
 				break
 			}
 
 		}
 
-		if flag {
+		if !flag {
 			aggregate = aBuilder.String()
 			aggregatesBy[aRule.Name] = aggregate
 			aBuilder.Reset()

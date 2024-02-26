@@ -5,7 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="cb2d5794-c146-4506-87d0-a61258f7519a" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/internal/services/calculateTheAggregated_test.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/hashStorage/storage.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/hashStorage/storage.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/services/handlers.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/services/handlers.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/services/services.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/services/services.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/services/services_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/services/prepareTheDataForHashing_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/transport/rest/handler.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/transport/rest/handler.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -37,25 +43,25 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "DefaultGoTemplateProperty": "Go File",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.go.formatter.settings.were.checked": "true",
-    "RunOnceActivity.go.migrated.go.modules.settings": "true",
-    "RunOnceActivity.go.modules.automatic.dependencies.download": "true",
-    "RunOnceActivity.go.modules.go.list.on.any.changes.was.set": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "payment",
-    "go.import.settings.migrated": "true",
-    "last_opened_file_path": "/home/kabman/GolandProjects/Antifraud-payment-system",
-    "node.js.detected.package.eslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "application.passwordSafe"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;DefaultGoTemplateProperty&quot;: &quot;Go File&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.formatter.settings.were.checked&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.migrated.go.modules.settings&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.modules.automatic.dependencies.download&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.modules.go.list.on.any.changes.was.set&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;payment&quot;,
+    &quot;go.import.settings.migrated&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/kabman/GolandProjects/Antifraud-payment-system/testAppByClient&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;application.passwordSafe&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/cmd/app" />
@@ -68,21 +74,14 @@
       <recent name="$PROJECT_DIR$/internal/transport/rest" />
     </key>
   </component>
-  <component name="RunManager" selected="Go Build.go build main.go">
-    <configuration name="go build github.com/1Kabman1/Antifraud-payment-system.git/cmd/app" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+  <component name="RunManager" selected="Go Test.calculateTheAggregated_test.go">
+    <configuration name="go build app.go" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
       <module name="Antifraud-payment-system" />
       <working_directory value="$PROJECT_DIR$" />
-      <kind value="PACKAGE" />
-      <package value="github.com/1Kabman1/Antifraud-payment-system.git/cmd/app" />
+      <kind value="FILE" />
+      <package value="github.com/1Kabman1/Antifraud-payment-system.git" />
       <directory value="$PROJECT_DIR$" />
-      <method v="2" />
-    </configuration>
-    <configuration name="go build github.com/1Kabman1/Antifraud-payment-system.git/testAppByClient" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
-      <module name="Antifraud-payment-system" />
-      <working_directory value="$PROJECT_DIR$" />
-      <kind value="PACKAGE" />
-      <package value="github.com/1Kabman1/Antifraud-payment-system.git/testAppByClient" />
-      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$/internal/app/app.go" />
       <method v="2" />
     </configuration>
     <configuration name="go build main.go" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
@@ -94,36 +93,43 @@
       <filePath value="$PROJECT_DIR$/cmd/app/main.go" />
       <method v="2" />
     </configuration>
-    <configuration name="TestCreateAggregationRoull in github.com/1Kabman1/Antifraud-payment-system.git/internal/transport/rest" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+    <configuration name="TestPrepareTheDataForHashing_test.go" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="Antifraud-payment-system" />
-      <working_directory value="$PROJECT_DIR$/internal/transport/rest" />
+      <working_directory value="$PROJECT_DIR$/internal/services" />
       <root_directory value="$PROJECT_DIR$" />
-      <kind value="PACKAGE" />
-      <package value="github.com/1Kabman1/Antifraud-payment-system.git/internal/transport/rest" />
+      <kind value="FILE" />
       <directory value="$PROJECT_DIR$" />
-      <filePath value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$/internal/services/TestPrepareTheDataForHashing_test.go" />
       <framework value="gotest" />
-      <pattern value="^\QTestCreateAggregationRoull\E$" />
       <method v="2" />
     </configuration>
-    <configuration name="go test github.com/1Kabman1/Antifraud-payment-system.git/test" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+    <configuration name="calculateHash_test.go" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="Antifraud-payment-system" />
-      <working_directory value="$PROJECT_DIR$/test" />
+      <working_directory value="$PROJECT_DIR$/internal/services" />
       <root_directory value="$PROJECT_DIR$" />
-      <kind value="PACKAGE" />
-      <package value="github.com/1Kabman1/Antifraud-payment-system.git/test" />
+      <kind value="FILE" />
       <directory value="$PROJECT_DIR$" />
-      <filePath value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$/internal/services/calculateHash_test.go" />
+      <framework value="gotest" />
+      <method v="2" />
+    </configuration>
+    <configuration name="calculateTheAggregated_test.go" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+      <module name="Antifraud-payment-system" />
+      <working_directory value="$PROJECT_DIR$/internal/services" />
+      <root_directory value="$PROJECT_DIR$" />
+      <kind value="FILE" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$/internal/services/calculateTheAggregated_test.go" />
       <framework value="gotest" />
       <method v="2" />
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Go Test.calculateTheAggregated_test.go" />
         <item itemvalue="Go Build.go build main.go" />
-        <item itemvalue="Go Build.go build github.com/1Kabman1/Antifraud-payment-system.git/testAppByClient" />
-        <item itemvalue="Go Test.TestCreateAggregationRoull in github.com/1Kabman1/Antifraud-payment-system.git/internal/transport/rest" />
-        <item itemvalue="Go Test.go test github.com/1Kabman1/Antifraud-payment-system.git/test" />
-        <item itemvalue="Go Build.go build github.com/1Kabman1/Antifraud-payment-system.git/cmd/app" />
+        <item itemvalue="Go Build.go build app.go" />
+        <item itemvalue="Go Test.calculateHash_test.go" />
+        <item itemvalue="Go Test.TestPrepareTheDataForHashing_test.go" />
       </list>
     </recent_temporary>
   </component>
@@ -135,9 +141,26 @@
     <settings-migrated>true</settings-migrated>
   </component>
   <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/internal/services/prepareTheDataForHashing_test.go</url>
+          <line>87</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/internal/services/calculateTheAggregated_test.go</url>
+          <line>52</line>
+          <option name="timeStamp" value="17" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
     <watches-manager>
       <configuration name="GoApplicationRunConfiguration">
         <watch expression="*(*&quot;int&quot;)(824635908224)" />
+      </configuration>
+      <configuration name="GoTestRunConfiguration">
+        <watch expression="*(*&quot;void&quot;)(0)" />
       </configuration>
     </watches-manager>
   </component>

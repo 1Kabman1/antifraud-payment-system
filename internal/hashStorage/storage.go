@@ -1,6 +1,8 @@
 package hashStorage
 
-import "errors"
+import (
+	"errors"
+)
 
 type Storage struct {
 	rules     map[string]interface{}
@@ -11,8 +13,9 @@ type Storage struct {
 // NewStorage - create a Storage
 func NewStorage() Storage {
 	return Storage{
-		rules:   make(map[string]interface{}),
-		counter: make(map[[16]byte]interface{}),
+		rules:     make(map[string]interface{}),
+		counter:   make(map[[16]byte]interface{}),
+		archivist: make(map[int]int),
 	}
 }
 
@@ -61,7 +64,7 @@ func (s *Storage) SetCounter(key [16]byte, v interface{}) {
 
 }
 
-// Counter - return Counter
+// Counter - return counter
 func (s *Storage) Counter(key [16]byte) (error, interface{}) {
 	err := errors.New("Key is not correct")
 

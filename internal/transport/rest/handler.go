@@ -22,7 +22,7 @@ func StartHandler() error {
 	flag.Parse()
 
 	h := services.Handlers{}
-	h.SetStorage()
+	h.ToEstablishStorage()
 
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)

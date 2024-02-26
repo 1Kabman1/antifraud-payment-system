@@ -2,6 +2,7 @@ package services
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/1Kabman1/Antifraud-payment-system.git/internal/hashStorage"
 	"log"
 	"net/http"
@@ -15,8 +16,8 @@ type Handlers struct {
 	infoLog  *log.Logger
 }
 
-// SetStorage - set storage and logs
-func (h *Handlers) SetStorage() {
+// ToEstablishStorage - set storage and logs
+func (h *Handlers) ToEstablishStorage() {
 	h.s = hashStorage.NewStorage()
 	h.errorLog = log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
 	h.infoLog = log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
@@ -118,28 +119,27 @@ func (h *Handlers) CalculateTheAggregated(w http.ResponseWriter, r *http.Request
 			h.errorLog.Println(err)
 			return
 		}
+		fmt.Println(keyCounter)
 		aRule := tempRule.(rule)
 
 		if h.s.IsCounter(keyCounter) {
-			err, tempCounter := h.s.Counter(keyCounter)
-			if err != nil {
-				http.Error(w, err.Error(), http.StatusInternalServerError)
-				h.errorLog.Println(err)
-				return
-			}
-			aCounter := tempCounter.(counter)
+
+			_, tmpCounter := h.s.Counter(keyCounter)
+			c := tmpCounter.(counter)
 
 			if aRule.AggregateValue == "count" {
-				aCounter.value++
+				c.Value += 1
+				h.s.SetCounter(keyCounter, c)
 			} else {
-				aCounter.value += int(mapPING["amount"].(float64))
+				c.Value += int(mapPING["amount"].(float64))
+				h.s.SetCounter(keyCounter, c)
 			}
 		} else {
 			aNewCounter := newCounter()
 			if aRule.AggregateValue == "amount" {
-				aNewCounter.value = int(mapPING["amount"].(float64))
+				aNewCounter.Value = int(mapPING["amount"].(float64))
 			} else {
-				aNewCounter.value++
+				aNewCounter.Value++
 			}
 			idCounter := h.s.CounterLen() + 1
 			aNewCounter.id = idCounter
