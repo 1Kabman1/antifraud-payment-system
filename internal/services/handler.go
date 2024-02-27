@@ -100,19 +100,19 @@ func (h *apiHandler) RegisterOperation(w http.ResponseWriter, r *http.Request) {
 		amount        = "amount"
 	)
 
-	mapPING := map[string]interface{}{}
+	mapping := map[string]interface{}{}
 
 	if r.Body != nil {
 		defer r.Body.Close()
 	}
 
-	if err := json.NewDecoder(r.Body).Decode(&mapPING); err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&mapping); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		h.errorLog.Println(err.Error())
 		return
 	}
 
-	aggregatesBy, err := prepareTheDataForHashing(h.s.Rules(), mapPING)
+	aggregatesBy, err := prepareTheDataForHashing(h.s.Rules(), mapping)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		h.errorLog.Println(err)
@@ -138,13 +138,13 @@ func (h *apiHandler) RegisterOperation(w http.ResponseWriter, r *http.Request) {
 				c.Value += 1
 				h.s.SetCounter(keyCounter, c)
 			} else {
-				c.Value += int(mapPING[amount].(float64))
+				c.Value += int(mapping[amount].(float64))
 				h.s.SetCounter(keyCounter, c)
 			}
 		} else {
 			aNewCounter := newCounter()
 			if aRule.AggregateValue == amount {
-				aNewCounter.Value = int(mapPING[amount].(float64))
+				aNewCounter.Value = int(mapping[amount].(float64))
 			} else {
 				aNewCounter.Value++
 			}
