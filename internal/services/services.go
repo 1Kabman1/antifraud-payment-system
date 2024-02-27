@@ -21,18 +21,18 @@ func calculateHash(data map[string]string) map[string][16]byte {
 }
 
 // prepareTheDataForHashing - prepares data for hashing
-func prepareTheDataForHashing(h, mapping map[string]interface{}) (map[string]string, error) {
-	aggregatesBy := make(map[string]string, len(h))
+func prepareTheDataForHashing(rules, operationProperties map[string]interface{}) (map[string]string, error) {
+	aggregatesBy := make(map[string]string, len(rules))
 	var aBuilder strings.Builder
 
-	for _, tempRule := range h {
+	for _, tempRule := range rules {
 
 		aRule := tempRule.(rule)
 		aggregate := ""
 		var flag bool
 
 		for _, agg := range aRule.AggregateBy {
-			if v, ok := mapping[agg]; ok {
+			if v, ok := operationProperties[agg]; ok {
 				switch aInterface := v.(type) {
 				case float64:
 					intInterface := int(aInterface)
