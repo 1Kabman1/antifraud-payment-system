@@ -32,27 +32,26 @@ func prepareTheDataForHashing(rules, operationProperties map[string]interface{})
 		var flag bool
 
 		for _, agg := range aRule.AggregateBy {
-			if v, ok := operationProperties[agg]; ok {
-				switch aInterface := v.(type) {
-				case float64:
-					intInterface := int(aInterface)
-					_, err := aBuilder.WriteString(strconv.Itoa(intInterface))
-					if err != nil {
-						return nil, errors.New("the type is not float")
-					}
-					aBuilder.WriteString(agg) // добавляю имя агрегирующего чтобы убрать совпадение
-				case string:
-					_, err := aBuilder.WriteString(aInterface)
-					if err != nil {
-						return nil, errors.New("the type is not string")
-					}
-					aBuilder.WriteString(agg) // добавляю имя агрегирующего чтобы убрать совпадение
-				}
-
-			} else { // Если хотябы одно агрегируемое из правила не совпадает с поступившим на почет поручением, то оно автоматом исключается
+			v, ok := operationProperties[agg]
+			if ok {
 				flag = true
 				aBuilder.Reset()
 				break
+			}
+			switch aInterface := v.(type) {
+			case float64:
+				intInterface := int(aInterface)
+				_, err := aBuilder.WriteString(strconv.Itoa(intInterface))
+				if err != nil {
+					return nil, errors.New("the type is not float")
+				}
+				aBuilder.WriteString(agg) // добавляю имя агрегирующего чтобы убрать совпадение
+			case string:
+				_, err := aBuilder.WriteString(aInterface)
+				if err != nil {
+					return nil, errors.New("the type is not string")
+				}
+				aBuilder.WriteString(agg) // добавляю имя агрегирующего чтобы убрать совпадение
 			}
 
 		}
