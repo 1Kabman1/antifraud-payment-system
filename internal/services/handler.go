@@ -95,6 +95,11 @@ func (h *apiHandler) RegisterOperation(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	const (
+		count  string = "count"
+		amount        = "amount"
+	)
+
 	mapPING := map[string]interface{}{}
 
 	if r.Body != nil {
@@ -129,17 +134,17 @@ func (h *apiHandler) RegisterOperation(w http.ResponseWriter, r *http.Request) {
 			_, tmpCounter := h.s.Counter(keyCounter)
 			c := tmpCounter.(counter)
 
-			if aRule.AggregateValue == "count" {
+			if aRule.AggregateValue == count {
 				c.Value += 1
 				h.s.SetCounter(keyCounter, c)
 			} else {
-				c.Value += int(mapPING["amount"].(float64))
+				c.Value += int(mapPING[amount].(float64))
 				h.s.SetCounter(keyCounter, c)
 			}
 		} else {
 			aNewCounter := newCounter()
-			if aRule.AggregateValue == "amount" {
-				aNewCounter.Value = int(mapPING["amount"].(float64))
+			if aRule.AggregateValue == amount {
+				aNewCounter.Value = int(mapPING[amount].(float64))
 			} else {
 				aNewCounter.Value++
 			}
