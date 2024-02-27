@@ -48,8 +48,7 @@ func TestAggregationData(t *testing.T) {
 		AggregateValue:    "count",
 	}
 
-	h := Handlers{}
-	h.ToEstablishStorage()
+	h := NewApiHandler()
 	h.s.SetRule("rule1", rule1)
 
 	r := http.Request{}

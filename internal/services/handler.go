@@ -10,21 +10,23 @@ import (
 	"strconv"
 )
 
-type Handlers struct {
+type apiHandler struct {
 	s        hashStorage.Storage
 	errorLog *log.Logger
 	infoLog  *log.Logger
 }
 
-// ToEstablishStorage - set storage and logs
-func (h *Handlers) ToEstablishStorage() {
-	h.s = hashStorage.NewStorage()
-	h.errorLog = log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
-	h.infoLog = log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
+// NewApiHandler - set storage and logs
+func NewApiHandler() apiHandler {
+	return apiHandler{
+		s:        hashStorage.NewStorage(),
+		errorLog: log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile),
+		infoLog:  log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime),
+	}
 }
 
 // AggregationData - Get aggregation data
-func (h *Handlers) AggregationData(w http.ResponseWriter, _ *http.Request) {
+func (h *apiHandler) AggregationData(w http.ResponseWriter, _ *http.Request) {
 	if h.s.RulesLen() == 0 {
 		http.Error(w, "The rules don't exist yet", http.StatusInternalServerError)
 		return
@@ -57,7 +59,7 @@ func (h *Handlers) AggregationData(w http.ResponseWriter, _ *http.Request) {
 }
 
 // CreateAggregationRule - create aggregation rule
-func (h *Handlers) CreateAggregationRule(w http.ResponseWriter, r *http.Request) {
+func (h *apiHandler) CreateAggregationRule(w http.ResponseWriter, r *http.Request) {
 
 	aRule := newRule()
 
@@ -87,7 +89,7 @@ func (h *Handlers) CreateAggregationRule(w http.ResponseWriter, r *http.Request)
 }
 
 // CalculateTheAggregated - counts aggregated based on the rules
-func (h *Handlers) CalculateTheAggregated(w http.ResponseWriter, r *http.Request) {
+func (h *apiHandler) CalculateTheAggregated(w http.ResponseWriter, r *http.Request) {
 	if h.s.RulesLen() == 0 {
 		http.Error(w, "The rules don't exist yet", http.StatusInternalServerError)
 		return

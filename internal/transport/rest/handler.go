@@ -21,8 +21,7 @@ func StartHandler() error {
 	addr := flag.String("addr", Port, "HTTP address")
 	flag.Parse()
 
-	h := services.Handlers{}
-	h.ToEstablishStorage()
+	h := services.NewApiHandler()
 
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)

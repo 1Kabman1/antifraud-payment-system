@@ -5,12 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="cb2d5794-c146-4506-87d0-a61258f7519a" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/internal/services/calculateTheAggregated_test.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/hashStorage/storage.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/hashStorage/storage.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/services/handlers.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/services/handlers.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/services/services.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/services/services.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/services/services_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/services/prepareTheDataForHashing_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/services/aggregationData_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/services/aggregationData_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/services/calculateTheAggregated_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/services/calculateTheAggregated_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/services/handlers.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/services/handler.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/internal/transport/rest/handler.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/transport/rest/handler.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -55,7 +53,7 @@
     &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
     &quot;git-widget-placeholder&quot;: &quot;payment&quot;,
     &quot;go.import.settings.migrated&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/home/kabman/GolandProjects/Antifraud-payment-system/testAppByClient&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/kabman/GolandProjects/Antifraud-payment-system&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
@@ -74,7 +72,7 @@
       <recent name="$PROJECT_DIR$/internal/transport/rest" />
     </key>
   </component>
-  <component name="RunManager" selected="Go Test.calculateTheAggregated_test.go">
+  <component name="RunManager" selected="Go Build.go build main.go">
     <configuration name="go build app.go" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
       <module name="Antifraud-payment-system" />
       <working_directory value="$PROJECT_DIR$" />
@@ -91,16 +89,6 @@
       <package value="github.com/1Kabman1/Antifraud-payment-system.git" />
       <directory value="$PROJECT_DIR$" />
       <filePath value="$PROJECT_DIR$/cmd/app/main.go" />
-      <method v="2" />
-    </configuration>
-    <configuration name="TestPrepareTheDataForHashing_test.go" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
-      <module name="Antifraud-payment-system" />
-      <working_directory value="$PROJECT_DIR$/internal/services" />
-      <root_directory value="$PROJECT_DIR$" />
-      <kind value="FILE" />
-      <directory value="$PROJECT_DIR$" />
-      <filePath value="$PROJECT_DIR$/internal/services/TestPrepareTheDataForHashing_test.go" />
-      <framework value="gotest" />
       <method v="2" />
     </configuration>
     <configuration name="calculateHash_test.go" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
@@ -123,13 +111,23 @@
       <framework value="gotest" />
       <method v="2" />
     </configuration>
+    <configuration name="storege_test.go" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+      <module name="Antifraud-payment-system" />
+      <working_directory value="$PROJECT_DIR$/internal/hashStorage" />
+      <root_directory value="$PROJECT_DIR$" />
+      <kind value="FILE" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$/internal/hashStorage/storege_test.go" />
+      <framework value="gotest" />
+      <method v="2" />
+    </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Go Test.calculateTheAggregated_test.go" />
         <item itemvalue="Go Build.go build main.go" />
+        <item itemvalue="Go Test.storege_test.go" />
+        <item itemvalue="Go Test.calculateTheAggregated_test.go" />
         <item itemvalue="Go Build.go build app.go" />
         <item itemvalue="Go Test.calculateHash_test.go" />
-        <item itemvalue="Go Test.TestPrepareTheDataForHashing_test.go" />
       </list>
     </recent_temporary>
   </component>
@@ -148,11 +146,6 @@
           <line>87</line>
           <option name="timeStamp" value="1" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/services/calculateTheAggregated_test.go</url>
-          <line>52</line>
-          <option name="timeStamp" value="17" />
-        </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
     <watches-manager>
@@ -161,6 +154,7 @@
       </configuration>
       <configuration name="GoTestRunConfiguration">
         <watch expression="*(*&quot;void&quot;)(0)" />
+        <watch expression="*(*&quot;uint8&quot;)(824634947759)" />
       </configuration>
     </watches-manager>
   </component>
