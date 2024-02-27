@@ -50,7 +50,7 @@ func TestCalculateTheAggregated(t *testing.T) {
 
 	r, _ := http.NewRequest("POST", "http://127.0.0.1:8080/register", strings.NewReader(body))
 
-	h.CalculateTheAggregated(&w, r)
+	h.RegisterOperation(&w, r)
 
 	_, counter1 := h.s.Counter(expectedKeyCounter1)
 	c1 := counter1.(counter)
@@ -60,7 +60,7 @@ func TestCalculateTheAggregated(t *testing.T) {
 
 	r, _ = http.NewRequest("POST", "http://127.0.0.1:8080/register", strings.NewReader(body))
 
-	h.CalculateTheAggregated(&w, r)
+	h.RegisterOperation(&w, r)
 
 	_, counter2 := h.s.Counter(expectedKeyCounter2)
 	c2 := counter2.(counter)

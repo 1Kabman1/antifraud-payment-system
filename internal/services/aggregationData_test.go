@@ -53,6 +53,6 @@ func TestAggregationData(t *testing.T) {
 
 	r := http.Request{}
 	m := myResponseWriter{}
-	h.AggregationData(&m, &r)
+	h.GetAggregationRules(&m, &r)
 
 }

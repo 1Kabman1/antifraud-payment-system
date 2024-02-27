@@ -25,8 +25,8 @@ func NewApiHandler() apiHandler {
 	}
 }
 
-// AggregationData - Get aggregation data
-func (h *apiHandler) AggregationData(w http.ResponseWriter, _ *http.Request) {
+// GetAggregationRules - Get aggregation data
+func (h *apiHandler) GetAggregationRules(w http.ResponseWriter, _ *http.Request) {
 	if h.s.RulesLen() == 0 {
 		http.Error(w, "The rules don't exist yet", http.StatusInternalServerError)
 		return
@@ -88,8 +88,8 @@ func (h *apiHandler) CreateAggregationRule(w http.ResponseWriter, r *http.Reques
 
 }
 
-// CalculateTheAggregated - counts aggregated based on the rules
-func (h *apiHandler) CalculateTheAggregated(w http.ResponseWriter, r *http.Request) {
+// RegisterOperation - counts aggregated based on the rules
+func (h *apiHandler) RegisterOperation(w http.ResponseWriter, r *http.Request) {
 	if h.s.RulesLen() == 0 {
 		http.Error(w, "The rules don't exist yet", http.StatusInternalServerError)
 		return

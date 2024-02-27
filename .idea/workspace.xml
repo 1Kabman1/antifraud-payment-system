@@ -8,7 +8,7 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/internal/services/aggregationData_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/services/aggregationData_test.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/internal/services/calculateTheAggregated_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/services/calculateTheAggregated_test.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/services/handlers.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/services/handler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/services/handler.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/services/handler.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/internal/transport/rest/handler.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/transport/rest/handler.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />

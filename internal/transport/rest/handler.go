@@ -26,8 +26,8 @@ func StartHandler() error {
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
 	r.Post(CreateRule, h.CreateAggregationRule)
-	r.Get(GetRule, h.AggregationData)
-	r.Post(registerOperation, h.CalculateTheAggregated)
+	r.Get(GetRule, h.GetAggregationRules)
+	r.Post(registerOperation, h.RegisterOperation)
 
 	log.Println("Star server on port " + *addr)
 	return http.ListenAndServe(*addr, r)
