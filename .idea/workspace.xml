@@ -5,8 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="cb2d5794-c146-4506-87d0-a61258f7519a" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/services/services.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/services/services.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -69,7 +68,7 @@
       <recent name="$PROJECT_DIR$/internal/transport/rest" />
     </key>
   </component>
-  <component name="RunManager" selected="Go Build.go build main.go">
+  <component name="RunManager" selected="Go Test.calculateTheAggregated_test.go">
     <configuration name="go build app.go" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
       <module name="Antifraud-payment-system" />
       <working_directory value="$PROJECT_DIR$" />
@@ -88,13 +87,13 @@
       <filePath value="$PROJECT_DIR$/cmd/app/main.go" />
       <method v="2" />
     </configuration>
-    <configuration name="calculateHash_test.go" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+    <configuration name="aggregationData_test.go" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="Antifraud-payment-system" />
       <working_directory value="$PROJECT_DIR$/internal/services" />
       <root_directory value="$PROJECT_DIR$" />
       <kind value="FILE" />
       <directory value="$PROJECT_DIR$" />
-      <filePath value="$PROJECT_DIR$/internal/services/calculateHash_test.go" />
+      <filePath value="$PROJECT_DIR$/internal/services/aggregationData_test.go" />
       <framework value="gotest" />
       <method v="2" />
     </configuration>
@@ -120,11 +119,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Go Test.calculateTheAggregated_test.go" />
+        <item itemvalue="Go Test.aggregationData_test.go" />
         <item itemvalue="Go Build.go build main.go" />
         <item itemvalue="Go Test.storege_test.go" />
-        <item itemvalue="Go Test.calculateTheAggregated_test.go" />
         <item itemvalue="Go Build.go build app.go" />
-        <item itemvalue="Go Test.calculateHash_test.go" />
       </list>
     </recent_temporary>
   </component>
@@ -142,6 +141,11 @@
           <url>file://$PROJECT_DIR$/internal/services/prepareTheDataForHashing_test.go</url>
           <line>87</line>
           <option name="timeStamp" value="1" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/internal/services/handler.go</url>
+          <line>114</line>
+          <option name="timeStamp" value="7" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

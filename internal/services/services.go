@@ -33,7 +33,7 @@ func prepareTheDataForHashing(rules, operationProperties map[string]interface{})
 
 		for _, agg := range aRule.AggregateBy {
 			v, ok := operationProperties[agg]
-			if ok {
+			if !ok {
 				flag = true
 				aBuilder.Reset()
 				break
