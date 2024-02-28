@@ -9,6 +9,5 @@
 api/
 .idea/workspace.xml
 
-api/.idea
 go.sum
 go.mod
