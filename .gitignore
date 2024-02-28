@@ -8,6 +8,8 @@
 /dataSources.local.xml
 api/
 .idea/workspace.xml
-
+.idea/
+.idea/Antifraud-payment-system.iml
+.idea/vcs.xml
 go.sum
 go.mod
