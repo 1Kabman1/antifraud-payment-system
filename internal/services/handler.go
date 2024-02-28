@@ -10,6 +10,11 @@ import (
 	"strconv"
 )
 
+const (
+	count  string = "count"
+	amount        = "amount"
+)
+
 type apiHandler struct {
 	s        hashStorage.Storage
 	errorLog *log.Logger
@@ -94,11 +99,6 @@ func (h *apiHandler) RegisterOperation(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "The rules don't exist yet", http.StatusInternalServerError)
 		return
 	}
-
-	const (
-		count  string = "count"
-		amount        = "amount"
-	)
 
 	mapping := map[string]interface{}{}
 
