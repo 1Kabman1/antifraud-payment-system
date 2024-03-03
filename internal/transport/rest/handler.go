@@ -2,7 +2,7 @@ package rest
 
 import (
 	"flag"
-	"github.com/1Kabman1/Antifraud-payment-system.git/internal/services"
+	"github.com/1Kabman1/antifraud-payment-system/internal/services"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"log"

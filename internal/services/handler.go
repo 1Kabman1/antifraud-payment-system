@@ -3,7 +3,7 @@ package services
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/1Kabman1/Antifraud-payment-system.git/internal/hashStorage"
+	"github.com/1Kabman1/antifraud-payment-system/internal/hashStorage"
 	"log"
 	"net/http"
 	"os"
