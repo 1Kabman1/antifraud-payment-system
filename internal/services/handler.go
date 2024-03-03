@@ -148,7 +148,7 @@ func (h *apiHandler) RegisterOperation(w http.ResponseWriter, r *http.Request) {
 			} else {
 				aNewCounter.Value++
 			}
-			idCounter := h.s.CounterLen() + 1
+			idCounter := h.s.CounterLen()
 			aNewCounter.id = idCounter
 			h.s.SetCounter(keyCounter, aNewCounter)
 			h.s.AddToArchivist(aRule.AggregationRuleId, idCounter)

@@ -2,12 +2,13 @@ package hashStorage
 
 import (
 	"errors"
+	"strconv"
 )
 
 type Storage struct {
 	rules     map[string]interface{}
 	counter   map[[16]byte]interface{}
-	archivist map[int]int
+	archivist map[int][]int
 }
 
 // NewStorage - create a Storage
@@ -15,7 +16,7 @@ func NewStorage() Storage {
 	return Storage{
 		rules:     make(map[string]interface{}),
 		counter:   make(map[[16]byte]interface{}),
-		archivist: make(map[int]int),
+		archivist: make(map[int][]int, 5),
 	}
 }
 
@@ -82,5 +83,14 @@ func (s *Storage) CounterLen() int {
 
 // AddToArchivist - filled in by the archivist
 func (s *Storage) AddToArchivist(idRule, idCounter int) {
-	s.archivist[idRule] = idCounter
+	s.archivist[idRule] = append(s.archivist[idRule], idCounter)
+}
+
+// Archivist - is for test
+func (s *Storage) Archivist(key string) (int, error) {
+	id, err := strconv.Atoi(key)
+	if err != nil {
+		return 0, err
+	}
+	return len(s.archivist[id]), nil
 }
