@@ -56,7 +56,9 @@ func (s *Storage) HasRule(key string) bool {
 // HasCounter - Checks if there is a value in the map
 func (s *Storage) HasCounter(key [16]byte) bool {
 	_, ok := s.counter[key]
+
 	return ok
+
 }
 
 // SetCounter - sets id for c

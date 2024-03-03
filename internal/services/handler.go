@@ -115,15 +115,23 @@ func (h *apiHandler) RegisterOperation(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(keyCounter)
 		aRule := tempRule.(rule)
 
-		if h.s.HasCounter(keyCounter) {
-			_, tmpCounter := h.s.Counter(keyCounter)
-			c := tmpCounter.(counter)
-			increaseTheCounter(keyCounter, &h.s, c, aRule.AggregateValue, mapping)
-
-		} else {
+		if !h.s.HasCounter(keyCounter) {
 			aNewCounter := newCounter()
-			addTheCounter(keyCounter, aRule.AggregationRuleId, &h.s, aNewCounter, aRule.AggregateValue, mapping)
+			idCounter := h.s.CounterLen() + 1
+			aNewCounter.id = idCounter
+			h.s.SetCounter(keyCounter, aNewCounter)
+			h.s.AddToArchivist(aRule.AggregationRuleId, idCounter)
+		}
+
+		_, tmpCounter := h.s.Counter(keyCounter)
+		c := tmpCounter.(counter)
+
+		if aRule.AggregateValue == count {
+			c.Value += 1
+			h.s.SetCounter(keyCounter, c)
+		} else {
+			c.Value += int(mapping[amount].(float64))
+			h.s.SetCounter(keyCounter, c)
 		}
 	}
-
 }
