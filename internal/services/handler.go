@@ -78,7 +78,7 @@ func (h *apiHandler) CreateAggregationRule(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	if h.s.IsRule(aRule.Name) {
+	if h.s.HasRule(aRule.Name) {
 		w.Header().Set("Message", "rule already exists")
 		w.Header().Set("Status", " error "+strconv.Itoa(http.StatusConflict))
 
@@ -129,7 +129,7 @@ func (h *apiHandler) RegisterOperation(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(keyCounter)
 		aRule := tempRule.(rule)
 
-		if h.s.IsCounter(keyCounter) {
+		if h.s.HasCounter(keyCounter) {
 
 			_, tmpCounter := h.s.Counter(keyCounter)
 			c := tmpCounter.(counter)

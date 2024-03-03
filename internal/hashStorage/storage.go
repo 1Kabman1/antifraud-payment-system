@@ -47,14 +47,14 @@ func (s *Storage) Rule(key string) (error, interface{}) {
 	return err, nil
 }
 
-// IsRule - return bool
-func (s *Storage) IsRule(key string) bool {
+// HasRule - return bool
+func (s *Storage) HasRule(key string) bool {
 	_, ok := s.rules[key]
 	return ok
 }
 
-// IsCounter - Checks if there is a value in the map
-func (s *Storage) IsCounter(key [16]byte) bool {
+// HasCounter - Checks if there is a value in the map
+func (s *Storage) HasCounter(key [16]byte) bool {
 	_, ok := s.counter[key]
 	return ok
 }
