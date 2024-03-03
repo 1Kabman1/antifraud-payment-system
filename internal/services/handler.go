@@ -67,14 +67,12 @@ func (h *apiHandler) CreateAggregationRule(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	//добавить хеш по агругирующим в правиле , есть баг имена у правил разные а агриг рующие одинаковые
-
 	if h.s.HasRule(aRule.Name) {
 		http.Error(w, "< Rule already exists \n", http.StatusConflict)
 		return
 	}
 
-	h.s.SetRule(aRule.Name, aRule)
+	h.s.SetRule(aRule.Name, &aRule)
 	w.Write([]byte("Message " + "Rule " + strconv.Itoa(h.s.IdRule(aRule.Name)) + " created"))
 
 }
@@ -82,19 +80,19 @@ func (h *apiHandler) CreateAggregationRule(w http.ResponseWriter, r *http.Reques
 // RegisterOperation - counts aggregated based on the rules
 func (h *apiHandler) RegisterOperation(w http.ResponseWriter, r *http.Request) {
 
-	mapping := map[string]interface{}{}
+	payment := map[string]interface{}{}
 
 	if r.Body != nil {
 		defer r.Body.Close()
 	}
 
-	if err := json.NewDecoder(r.Body).Decode(&mapping); err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&payment); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		h.errorLog.Println(err.Error())
 		return
 	}
 
-	aggregatesBy, err := prepareTheDataForHashing(h.s.Rules(), mapping)
+	aggregatesBy, err := prepareTheDataForHashing(h.s.Rules(), payment)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		h.errorLog.Println(err)
@@ -110,22 +108,15 @@ func (h *apiHandler) RegisterOperation(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if !h.s.HasCounter(keyCounter) {
-			aNewCounter := newCounter()
-			idCounter := h.s.CounterLen() + 1
-			aNewCounter.id = idCounter
-			h.s.SetCounter(keyCounter, aNewCounter)
-			h.s.AddToArchivist(h.s.IdRule(aRule.Name), idCounter)
+			h.s.SetCounter(keyCounter, aRule.Name)
 		}
 
-		_, tmpCounter := h.s.Counter(keyCounter)
-		c := tmpCounter.(counter)
+		_, c := h.s.Counter(keyCounter)
 
 		if aRule.AggregateValue == count {
 			c.Value += 1
-			h.s.SetCounter(keyCounter, c)
 		} else {
-			c.Value += int(mapping[amount].(float64))
-			h.s.SetCounter(keyCounter, c)
+			c.Value += int(payment[amount].(float64))
 		}
 	}
 }

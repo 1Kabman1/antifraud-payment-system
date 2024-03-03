@@ -22,7 +22,7 @@ func calculateHash(data map[string]string) map[string][16]byte {
 }
 
 // prepareTheDataForHashing - prepares data for hashing
-func prepareTheDataForHashing(rules map[string]hashStorage.Rule, operationProperties map[string]interface{}) (map[string]string, error) {
+func prepareTheDataForHashing(rules map[string]*hashStorage.Rule, payment map[string]interface{}) (map[string]string, error) {
 	aggregatesBy := make(map[string]string, len(rules))
 	var aBuilder strings.Builder
 
@@ -31,7 +31,7 @@ func prepareTheDataForHashing(rules map[string]hashStorage.Rule, operationProper
 		var flag bool
 
 		for _, agg := range tempRule.AggregateBy {
-			v, ok := operationProperties[agg]
+			v, ok := payment[agg]
 			if !ok {
 				flag = true
 				aBuilder.Reset()

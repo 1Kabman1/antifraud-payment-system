@@ -37,8 +37,8 @@ func TestCalculateTheAggregated(t *testing.T) {
 	}
 
 	h := NewApiHandler()
-	h.s.SetRule("rule1", rule1)
-	h.s.SetRule("rule2", rule2)
+	h.s.SetRule("rule1", &rule1)
+	h.s.SetRule("rule2", &rule2)
 
 	w := myResponseWriterTwo{}
 
@@ -52,8 +52,7 @@ func TestCalculateTheAggregated(t *testing.T) {
 	h.RegisterOperation(&w, r)
 
 	_, counter1 := h.s.Counter(expectedKeyCounter1)
-	c1 := counter1.(counter)
-	if !assert.Equal(t, c1.Value, 1) {
+	if !assert.Equal(t, counter1.Value, 1) {
 		log.Panic()
 	}
 
@@ -62,8 +61,7 @@ func TestCalculateTheAggregated(t *testing.T) {
 	h.RegisterOperation(&w, r)
 
 	_, counter2 := h.s.Counter(expectedKeyCounter2)
-	c2 := counter2.(counter)
-	if !assert.Equal(t, c2.Value, 200) {
+	if !assert.Equal(t, counter2.Value, 200) {
 		log.Panic()
 	}
 
@@ -83,8 +81,8 @@ func TestCalculateTheAggregatedIdenticalAggregateBy(t *testing.T) {
 	}
 
 	h := NewApiHandler()
-	h.s.SetRule("rule1", rule1)
-	h.s.SetRule("rule2", rule2)
+	h.s.SetRule("rule1", &rule1)
+	h.s.SetRule("rule2", &rule2)
 
 	w := myResponseWriterTwo{}
 

@@ -6,22 +6,22 @@ import (
 )
 
 type Storage struct {
-	rules     map[string]Rule
-	counter   map[[16]byte]interface{}
+	rules     map[string]*Rule
+	counter   map[[16]byte]*Counter
 	archivist map[int][]int
 }
 
 // NewStorage - create a Storage
 func NewStorage() Storage {
 	return Storage{
-		rules:     make(map[string]Rule),
-		counter:   make(map[[16]byte]interface{}),
+		rules:     make(map[string]*Rule),
+		counter:   make(map[[16]byte]*Counter),
 		archivist: make(map[int][]int, 5),
 	}
 }
 
 // SetRule - set rule in map
-func (s *Storage) SetRule(nameKey string, rule Rule) {
+func (s *Storage) SetRule(nameKey string, rule *Rule) {
 	id := s.RulesLen() + 1
 	rule.aggregationRuleId = id
 	s.rules[nameKey] = rule
@@ -38,20 +38,20 @@ func (s *Storage) IdRule(name string) int {
 }
 
 // Rules - returns rules
-func (s *Storage) Rules() map[string]Rule {
+func (s *Storage) Rules() map[string]*Rule {
 	return s.rules
 }
 
 // Rule - returns a rule
-func (s *Storage) Rule(key string) (error, Rule) {
+func (s *Storage) Rule(key string) (error, *Rule) {
 	err := errors.New("Key is not correct")
-
 	_, ok := s.rules[key]
 	if ok {
-		return nil, s.rules[key]
+		r := s.rules[key]
+		return nil, r
 	}
 
-	return err, Rule{}
+	return err, &Rule{}
 }
 
 // HasRule - return bool
@@ -63,26 +63,27 @@ func (s *Storage) HasRule(key string) bool {
 // HasCounter - Checks if there is a value in the map
 func (s *Storage) HasCounter(key [16]byte) bool {
 	_, ok := s.counter[key]
-
 	return ok
-
 }
 
 // SetCounter - sets id for c
-func (s *Storage) SetCounter(key [16]byte, v interface{}) {
-	s.counter[key] = v
-
+func (s *Storage) SetCounter(key [16]byte, nameRule string) {
+	aNewCounter := NewCounter()
+	idCounter := s.CounterLen() + 1
+	aNewCounter.id = idCounter
+	s.counter[key] = &aNewCounter
+	s.AddToArchivist(s.IdRule(nameRule), idCounter)
 }
 
-// Counter - return counter
-func (s *Storage) Counter(key [16]byte) (error, interface{}) {
+// Counter - return Counter
+func (s *Storage) Counter(key [16]byte) (error, *Counter) {
 	err := errors.New("Key is not correct")
-
 	_, ok := s.counter[key]
 	if ok {
-		return nil, s.counter[key]
+		c := s.counter[key]
+		return nil, c
 	}
-	return err, nil
+	return err, &Counter{}
 }
 
 // CounterLen - return len

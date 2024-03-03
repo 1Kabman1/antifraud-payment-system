@@ -48,7 +48,7 @@ func TestAggregationData(t *testing.T) {
 	}
 
 	h := NewApiHandler()
-	h.s.SetRule("rule1", rule1)
+	h.s.SetRule("rule1", &rule1)
 
 	r := http.Request{}
 	m := myResponseWriter{}
