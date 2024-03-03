@@ -6,7 +6,7 @@ import (
 )
 
 type Storage struct {
-	rules     map[string]*Rule
+	rules     map[int]*Rule
 	counter   map[[16]byte]*Counter
 	archivist map[int][]int
 }
@@ -14,17 +14,22 @@ type Storage struct {
 // NewStorage - create a Storage
 func NewStorage() Storage {
 	return Storage{
-		rules:     make(map[string]*Rule),
+		rules:     make(map[int]*Rule),
 		counter:   make(map[[16]byte]*Counter),
 		archivist: make(map[int][]int, 5),
 	}
 }
 
 // SetRule - set rule in map
-func (s *Storage) SetRule(nameKey string, rule *Rule) {
+func (s *Storage) SetRule(name string, rule *Rule) bool {
 	id := s.RulesLen() + 1
-	rule.aggregationRuleId = id
-	s.rules[nameKey] = rule
+	if s.HasRule(id) {
+		return true
+	}
+	rule.AggregationRuleId = id
+	rule.Name = name
+	s.rules[id] = rule
+	return false
 }
 
 // RulesLen - returns the length of the map
@@ -32,22 +37,22 @@ func (s *Storage) RulesLen() int {
 	return len(s.rules)
 }
 
-// IdRule - Return id rule
-func (s *Storage) IdRule(name string) int {
-	return s.rules[name].aggregationRuleId
-}
+//// IdRule - Return id rule
+//func (s *Storage) IdRule(id int) int {
+//	return s.rules[id].AggregationRuleId
+//}
 
 // Rules - returns rules
-func (s *Storage) Rules() map[string]*Rule {
+func (s *Storage) Rules() map[int]*Rule {
 	return s.rules
 }
 
 // Rule - returns a rule
-func (s *Storage) Rule(key string) (error, *Rule) {
+func (s *Storage) Rule(id int) (error, *Rule) {
 	err := errors.New("Key is not correct")
-	_, ok := s.rules[key]
+	_, ok := s.rules[id]
 	if ok {
-		r := s.rules[key]
+		r := s.rules[id]
 		return nil, r
 	}
 
@@ -55,8 +60,8 @@ func (s *Storage) Rule(key string) (error, *Rule) {
 }
 
 // HasRule - return bool
-func (s *Storage) HasRule(key string) bool {
-	_, ok := s.rules[key]
+func (s *Storage) HasRule(id int) bool {
+	_, ok := s.rules[id]
 	return ok
 }
 
@@ -67,12 +72,12 @@ func (s *Storage) HasCounter(key [16]byte) bool {
 }
 
 // SetCounter - sets id for c
-func (s *Storage) SetCounter(key [16]byte, nameRule string) {
+func (s *Storage) SetCounter(key [16]byte, id int) {
 	aNewCounter := NewCounter()
 	idCounter := s.CounterLen() + 1
 	aNewCounter.id = idCounter
 	s.counter[key] = &aNewCounter
-	s.AddToArchivist(s.IdRule(nameRule), idCounter)
+	s.AddToArchivist(id, idCounter)
 }
 
 // Counter - return Counter

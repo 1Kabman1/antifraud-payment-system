@@ -1,7 +1,7 @@
 package hashStorage
 
 type Rule struct {
-	aggregationRuleId int
+	AggregationRuleId int      `json:"AggregationRuleId"`
 	Name              string   `json:"Name"`
 	AggregateBy       []string `json:"AggregateBy"`
 	AggregateValue    string   `json:"AggregateValue"` // enum aggregateType

@@ -2,10 +2,10 @@ package services
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/1Kabman1/antifraud-payment-system/internal/hashStorage"
 	"github.com/stretchr/testify/assert"
 	"net/http"
+	"strconv"
 	"testing"
 )
 
@@ -18,18 +18,21 @@ func (m *myResponseWriter) Header() http.Header {
 	return http.Header{}
 }
 func (m *myResponseWriter) Write(w []byte) (int, error) {
-	if !m.flag {
+	if m.flag {
 		aRule := hashStorage.Rule{
-			Name:           "rule1",
-			AggregateBy:    []string{"a", "b"},
-			AggregateValue: "count",
+			AggregationRuleId: 1,
+			Name:              "rule1",
+			AggregateBy:       []string{"a", "b"},
+			AggregateValue:    "count",
 		}
 
-		fmt.Println(w)
+		resp := make(map[string]hashStorage.Rule)
 
-		expected, _ := json.Marshal(aRule)
+		resp[strconv.Itoa(aRule.AggregationRuleId)] = aRule
 
-		ok := assert.Equal(&m.t, string(w), string(expected))
+		ruleJson, _ := json.Marshal(resp)
+
+		ok := assert.Equal(&m.t, string(w), string(ruleJson))
 		if !ok {
 			m.t.Fatal(w)
 		}

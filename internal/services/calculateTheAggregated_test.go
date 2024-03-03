@@ -44,8 +44,8 @@ func TestCalculateTheAggregated(t *testing.T) {
 
 	body := `{"a": 1, "b": "2", "c": "1", "d": "2", "amount": 100.00}`
 
-	var expectedKeyCounter1 = [16]byte{24, 159, 252, 74, 24, 132, 173, 22, 84, 162, 195, 1, 1, 133, 146, 20}
-	var expectedKeyCounter2 = [16]byte{75, 47, 51, 201, 178, 229, 255, 233, 21, 199, 102, 59, 131, 78, 63, 209}
+	var expectedKeyCounter1 = [16]byte{144, 205, 130, 169, 81, 153, 100, 226, 115, 20, 161, 23, 204, 35, 219, 186}
+	var expectedKeyCounter2 = [16]byte{120, 246, 85, 64, 24, 36, 1, 115, 223, 251, 47, 194, 246, 149, 48, 110}
 
 	r, _ := http.NewRequest("POST", "http://127.0.0.1:8080/register", strings.NewReader(body))
 
@@ -72,43 +72,34 @@ func TestCalculateTheAggregatedIdenticalAggregateBy(t *testing.T) {
 	rule1 := hashStorage.Rule{
 		Name:           "rule1",
 		AggregateBy:    []string{"a", "b"},
-		AggregateValue: "count",
+		AggregateValue: "amount",
 	}
 	rule2 := hashStorage.Rule{
-		Name:           "rule2",
+		Name:           "rule1",
 		AggregateBy:    []string{"a", "b"},
 		AggregateValue: "amount",
 	}
 
 	h := NewApiHandler()
 	h.s.SetRule("rule1", &rule1)
-	h.s.SetRule("rule2", &rule2)
+	h.s.SetRule("rule1", &rule2)
 
 	w := myResponseWriterTwo{}
 
 	body := `{"a": 1, "b": "2", "c": "1", "d": "2", "amount": 100.00}`
 
-	//var expectedKeyCounter1 = [16]byte{24, 159, 252, 74, 24, 132, 173, 22, 84, 162, 195, 1, 1, 133, 146, 20}
-	//var expectedKeyCounter2 = [16]byte{75, 47, 51, 201, 178, 229, 255, 233, 21, 199, 102, 59, 131, 78, 63, 209}
+	var expectedKeyCounter1 = [16]byte{144, 205, 130, 169, 81, 153, 100, 226, 115, 20, 161, 23, 204, 35, 219, 186}
+
+	var expectedKeyCounter2 = [16]byte{160, 195, 89, 108, 8, 85, 162, 177, 34, 120, 114, 137, 155, 21, 128, 12}
 
 	r, _ := http.NewRequest("POST", "http://127.0.0.1:8080/register", strings.NewReader(body))
 
 	h.RegisterOperation(&w, r)
 
-	//_, counter1 := h.s.Counter(expectedKeyCounter1)
-	//c1 := counter1.(counter)
-	//if !assert.Equal(t, c1.Value, 1) {
-	//	log.Panic()
-	//}
-
-	r, _ = http.NewRequest("POST", "http://127.0.0.1:8080/register", strings.NewReader(body))
-
-	h.RegisterOperation(&w, r)
-
-	//_, counter2 := h.s.Counter(expectedKeyCounter2)
-	//c2 := counter2.(counter)
-	//if !assert.Equal(t, c2.Value, 200) {
-	//	log.Panic()
-	//}
+	_, counter1 := h.s.Counter(expectedKeyCounter1)
+	_, counter2 := h.s.Counter(expectedKeyCounter2)
+	if !assert.Equal(t, counter1.Value, counter2.Value) {
+		log.Panic()
+	}
 
 }

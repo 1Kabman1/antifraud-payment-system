@@ -6,9 +6,9 @@ import (
 )
 
 func TestCalculateHash(t *testing.T) {
-	expected := map[string]string{"a": "1", "b": "1"}
+	expected := map[int]string{1: "1", 2: "1"}
 	actual := calculateHash(expected)
-	ok := assert.Equal(t, actual["a"], actual["b"])
+	ok := assert.Equal(t, actual[1], actual[2])
 	if !ok {
 		t.Fatal()
 	}

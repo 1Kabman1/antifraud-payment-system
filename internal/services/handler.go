@@ -33,23 +33,29 @@ func NewApiHandler() apiHandler {
 func (h *apiHandler) GetAggregationRules(w http.ResponseWriter, _ *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
-	w.Header().Add("Status", "success")
+
+	resp := make(map[string]hashStorage.Rule, h.s.RulesLen())
 
 	for _, aRule := range h.s.Rules() {
+		resp[strconv.Itoa(aRule.AggregationRuleId)] = *aRule
+	}
 
-		ruleJson, err := json.Marshal(aRule)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			h.errorLog.Println(err)
-			return
-		}
-
+	ruleJson, err := json.Marshal(resp)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		h.errorLog.Println(err)
+		return
+	}
+	if json.Valid(ruleJson) {
+		w.Write([]byte("Status " + "success \n"))
 		if _, err := w.Write(ruleJson); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+	} else {
 
 	}
+
 }
 
 // CreateAggregationRule - create aggregation Rule
@@ -67,13 +73,12 @@ func (h *apiHandler) CreateAggregationRule(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	if h.s.HasRule(aRule.Name) {
-		http.Error(w, "< Rule already exists \n", http.StatusConflict)
+	if h.s.SetRule(aRule.Name, &aRule) {
+		http.Error(w, "Rule already exists \n", http.StatusConflict)
 		return
 	}
 
-	h.s.SetRule(aRule.Name, &aRule)
-	w.Write([]byte("Message " + "Rule " + strconv.Itoa(h.s.IdRule(aRule.Name)) + " created"))
+	w.Write([]byte("Message " + "Rule " + strconv.Itoa(aRule.AggregationRuleId) + " created"))
 
 }
 
@@ -108,7 +113,7 @@ func (h *apiHandler) RegisterOperation(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if !h.s.HasCounter(keyCounter) {
-			h.s.SetCounter(keyCounter, aRule.Name)
+			h.s.SetCounter(keyCounter, aRule.AggregationRuleId)
 		}
 
 		_, c := h.s.Counter(keyCounter)

@@ -9,19 +9,21 @@ import (
 func TestPrepareTheDataForHashing(t *testing.T) {
 
 	rule1 := hashStorage.Rule{
-		Name:           "rule1",
-		AggregateBy:    []string{"a", "b"},
-		AggregateValue: "count",
+		AggregationRuleId: 0,
+		Name:              "rule1",
+		AggregateBy:       []string{"a", "b"},
+		AggregateValue:    "count",
 	}
 	rule2 := hashStorage.Rule{
-		Name:           "rule2",
-		AggregateBy:    []string{"c", "d"},
-		AggregateValue: "amount",
+		AggregationRuleId: 1,
+		Name:              "rule2",
+		AggregateBy:       []string{"c", "d"},
+		AggregateValue:    "amount",
 	}
 
-	rules := map[string]*hashStorage.Rule{}
-	rules["rule1"] = &rule1
-	rules["rules2"] = &rule2
+	rules := map[int]*hashStorage.Rule{}
+	rules[1] = &rule1
+	rules[2] = &rule2
 
 	payments := map[string]interface{}{}
 	payments["a"] = 1234.00
@@ -31,6 +33,6 @@ func TestPrepareTheDataForHashing(t *testing.T) {
 
 	actual, _ := prepareTheDataForHashing(rules, payments)
 
-	expected := map[string]string{"rule1": "1234a2b", "rule2": "1234c2d"}
+	expected := map[int]string{0: "1234a2b0", 1: "1234c2d1"}
 	assert.Equal(t, expected, actual)
 }

@@ -9,8 +9,8 @@ import (
 )
 
 // calculateHash - hash function
-func calculateHash(data map[string]string) map[string][16]byte {
-	result := make(map[string][16]byte)
+func calculateHash(data map[int]string) map[int][16]byte {
+	result := make(map[int][16]byte)
 
 	for key, val := range data {
 		h := md5.Sum([]byte(val))
@@ -22,15 +22,15 @@ func calculateHash(data map[string]string) map[string][16]byte {
 }
 
 // prepareTheDataForHashing - prepares data for hashing
-func prepareTheDataForHashing(rules map[string]*hashStorage.Rule, payment map[string]interface{}) (map[string]string, error) {
-	aggregatesBy := make(map[string]string, len(rules))
+func prepareTheDataForHashing(rules map[int]*hashStorage.Rule, payment map[string]interface{}) (map[int]string, error) {
+	aggregatesBy := make(map[int]string, len(rules))
 	var aBuilder strings.Builder
 
-	for _, tempRule := range rules {
+	for _, rule := range rules {
 		aggregate := ""
 		var flag bool
 
-		for _, agg := range tempRule.AggregateBy {
+		for _, agg := range rule.AggregateBy {
 			v, ok := payment[agg]
 			if !ok {
 				flag = true
@@ -57,8 +57,9 @@ func prepareTheDataForHashing(rules map[string]*hashStorage.Rule, payment map[st
 		}
 
 		if !flag {
+			aBuilder.WriteString(strconv.Itoa(rule.AggregationRuleId))
 			aggregate = aBuilder.String()
-			aggregatesBy[tempRule.Name] = aggregate
+			aggregatesBy[rule.AggregationRuleId] = aggregate
 			aBuilder.Reset()
 		}
 
