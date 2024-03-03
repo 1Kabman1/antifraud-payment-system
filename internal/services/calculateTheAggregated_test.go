@@ -1,6 +1,7 @@
 package services
 
 import (
+	"github.com/1Kabman1/antifraud-payment-system/internal/hashStorage"
 	"github.com/stretchr/testify/assert"
 	"log"
 	"net/http"
@@ -24,17 +25,15 @@ func (m *myResponseWriterTwo) WriteHeader(statusCode int) {}
 
 func TestCalculateTheAggregated(t *testing.T) {
 
-	rule1 := rule{
-		AggregationRuleId: 1,
-		Name:              "rule1",
-		AggregateBy:       []string{"a", "b"},
-		AggregateValue:    "count",
+	rule1 := hashStorage.Rule{
+		Name:           "rule1",
+		AggregateBy:    []string{"a", "b"},
+		AggregateValue: "count",
 	}
-	rule2 := rule{
-		AggregationRuleId: 2,
-		Name:              "rule2",
-		AggregateBy:       []string{"c", "d"},
-		AggregateValue:    "amount",
+	rule2 := hashStorage.Rule{
+		Name:           "rule2",
+		AggregateBy:    []string{"c", "d"},
+		AggregateValue: "amount",
 	}
 
 	h := NewApiHandler()
@@ -72,17 +71,15 @@ func TestCalculateTheAggregated(t *testing.T) {
 
 func TestCalculateTheAggregatedIdenticalAggregateBy(t *testing.T) {
 
-	rule1 := rule{
-		AggregationRuleId: 1,
-		Name:              "rule1",
-		AggregateBy:       []string{"a", "b"},
-		AggregateValue:    "count",
+	rule1 := hashStorage.Rule{
+		Name:           "rule1",
+		AggregateBy:    []string{"a", "b"},
+		AggregateValue: "count",
 	}
-	rule2 := rule{
-		AggregationRuleId: 2,
-		Name:              "rule2",
-		AggregateBy:       []string{"a", "b"},
-		AggregateValue:    "amount",
+	rule2 := hashStorage.Rule{
+		Name:           "rule2",
+		AggregateBy:    []string{"a", "b"},
+		AggregateValue: "amount",
 	}
 
 	h := NewApiHandler()

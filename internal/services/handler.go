@@ -2,7 +2,6 @@ package services
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/1Kabman1/antifraud-payment-system/internal/hashStorage"
 	"log"
 	"net/http"
@@ -53,10 +52,10 @@ func (h *apiHandler) GetAggregationRules(w http.ResponseWriter, _ *http.Request)
 	}
 }
 
-// CreateAggregationRule - create aggregation rule
+// CreateAggregationRule - create aggregation Rule
 func (h *apiHandler) CreateAggregationRule(w http.ResponseWriter, r *http.Request) {
 
-	aRule := newRule()
+	aRule := hashStorage.NewRule()
 
 	if r.Body != nil {
 		defer r.Body.Close()
@@ -69,17 +68,14 @@ func (h *apiHandler) CreateAggregationRule(w http.ResponseWriter, r *http.Reques
 	}
 
 	//добавить хеш по агругирующим в правиле , есть баг имена у правил разные а агриг рующие одинаковые
+
 	if h.s.HasRule(aRule.Name) {
 		http.Error(w, "< Rule already exists \n", http.StatusConflict)
 		return
-	} else {
-		id := h.s.RulesLen() + 1
-		aRule.AggregationRuleId = id
-		h.s.SetRule(aRule.Name, aRule)
-		w.Header().Add("Message", "rule "+strconv.Itoa(id)+" created")
-		w.Header().Add("Status", "success")
-
 	}
+
+	h.s.SetRule(aRule.Name, aRule)
+	w.Write([]byte("Message " + "Rule " + strconv.Itoa(h.s.IdRule(aRule.Name)) + " created"))
 
 }
 
@@ -106,21 +102,19 @@ func (h *apiHandler) RegisterOperation(w http.ResponseWriter, r *http.Request) {
 	}
 
 	for nameRule, keyCounter := range calculateHash(aggregatesBy) {
-		err, tempRule := h.s.Rule(nameRule)
+		err, aRule := h.s.Rule(nameRule)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			h.errorLog.Println(err)
 			return
 		}
-		fmt.Println(keyCounter)
-		aRule := tempRule.(rule)
 
 		if !h.s.HasCounter(keyCounter) {
 			aNewCounter := newCounter()
 			idCounter := h.s.CounterLen() + 1
 			aNewCounter.id = idCounter
 			h.s.SetCounter(keyCounter, aNewCounter)
-			h.s.AddToArchivist(aRule.AggregationRuleId, idCounter)
+			h.s.AddToArchivist(h.s.IdRule(aRule.Name), idCounter)
 		}
 
 		_, tmpCounter := h.s.Counter(keyCounter)

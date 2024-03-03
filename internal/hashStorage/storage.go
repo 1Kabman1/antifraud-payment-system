@@ -6,7 +6,7 @@ import (
 )
 
 type Storage struct {
-	rules     map[string]interface{}
+	rules     map[string]Rule
 	counter   map[[16]byte]interface{}
 	archivist map[int][]int
 }
@@ -14,15 +14,17 @@ type Storage struct {
 // NewStorage - create a Storage
 func NewStorage() Storage {
 	return Storage{
-		rules:     make(map[string]interface{}),
+		rules:     make(map[string]Rule),
 		counter:   make(map[[16]byte]interface{}),
 		archivist: make(map[int][]int, 5),
 	}
 }
 
 // SetRule - set rule in map
-func (s *Storage) SetRule(key string, rule interface{}) {
-	s.rules[key] = rule
+func (s *Storage) SetRule(nameKey string, rule Rule) {
+	id := s.RulesLen() + 1
+	rule.aggregationRuleId = id
+	s.rules[nameKey] = rule
 }
 
 // RulesLen - returns the length of the map
@@ -30,13 +32,18 @@ func (s *Storage) RulesLen() int {
 	return len(s.rules)
 }
 
+// IdRule - Return id rule
+func (s *Storage) IdRule(name string) int {
+	return s.rules[name].aggregationRuleId
+}
+
 // Rules - returns rules
-func (s *Storage) Rules() map[string]interface{} {
+func (s *Storage) Rules() map[string]Rule {
 	return s.rules
 }
 
 // Rule - returns a rule
-func (s *Storage) Rule(key string) (error, interface{}) {
+func (s *Storage) Rule(key string) (error, Rule) {
 	err := errors.New("Key is not correct")
 
 	_, ok := s.rules[key]
@@ -44,7 +51,7 @@ func (s *Storage) Rule(key string) (error, interface{}) {
 		return nil, s.rules[key]
 	}
 
-	return err, nil
+	return err, Rule{}
 }
 
 // HasRule - return bool

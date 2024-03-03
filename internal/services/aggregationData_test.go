@@ -3,6 +3,7 @@ package services
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/1Kabman1/antifraud-payment-system/internal/hashStorage"
 	"github.com/stretchr/testify/assert"
 	"net/http"
 	"testing"
@@ -18,11 +19,10 @@ func (m *myResponseWriter) Header() http.Header {
 }
 func (m *myResponseWriter) Write(w []byte) (int, error) {
 	if !m.flag {
-		aRule := rule{
-			AggregationRuleId: 1,
-			Name:              "rule1",
-			AggregateBy:       []string{"a", "b"},
-			AggregateValue:    "count",
+		aRule := hashStorage.Rule{
+			Name:           "rule1",
+			AggregateBy:    []string{"a", "b"},
+			AggregateValue: "count",
 		}
 
 		fmt.Println(w)
@@ -41,11 +41,10 @@ func (m *myResponseWriter) WriteHeader(statusCode int) {}
 
 func TestAggregationData(t *testing.T) {
 
-	rule1 := rule{
-		AggregationRuleId: 1,
-		Name:              "rule1",
-		AggregateBy:       []string{"a", "b"},
-		AggregateValue:    "count",
+	rule1 := hashStorage.Rule{
+		Name:           "rule1",
+		AggregateBy:    []string{"a", "b"},
+		AggregateValue: "count",
 	}
 
 	h := NewApiHandler()

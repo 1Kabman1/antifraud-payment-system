@@ -3,6 +3,7 @@ package services
 import (
 	"crypto/md5"
 	"errors"
+	"github.com/1Kabman1/antifraud-payment-system/internal/hashStorage"
 	"strconv"
 	"strings"
 )
@@ -21,23 +22,22 @@ func calculateHash(data map[string]string) map[string][16]byte {
 }
 
 // prepareTheDataForHashing - prepares data for hashing
-func prepareTheDataForHashing(rules, operationProperties map[string]interface{}) (map[string]string, error) {
+func prepareTheDataForHashing(rules map[string]hashStorage.Rule, operationProperties map[string]interface{}) (map[string]string, error) {
 	aggregatesBy := make(map[string]string, len(rules))
 	var aBuilder strings.Builder
 
 	for _, tempRule := range rules {
-
-		aRule := tempRule.(rule)
 		aggregate := ""
 		var flag bool
 
-		for _, agg := range aRule.AggregateBy {
+		for _, agg := range tempRule.AggregateBy {
 			v, ok := operationProperties[agg]
 			if !ok {
 				flag = true
 				aBuilder.Reset()
 				break
 			}
+
 			switch aInterface := v.(type) {
 			case float64:
 				intInterface := int(aInterface)
@@ -58,7 +58,7 @@ func prepareTheDataForHashing(rules, operationProperties map[string]interface{})
 
 		if !flag {
 			aggregate = aBuilder.String()
-			aggregatesBy[aRule.Name] = aggregate
+			aggregatesBy[tempRule.Name] = aggregate
 			aBuilder.Reset()
 		}
 
