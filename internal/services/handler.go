@@ -32,12 +32,9 @@ func NewApiHandler() apiHandler {
 
 // GetAggregationRules - Get aggregation data
 func (h *apiHandler) GetAggregationRules(w http.ResponseWriter, _ *http.Request) {
-	if h.s.RulesLen() == 0 {
-		return
-	}
 
-	w.Header().Set("Status", "success")
 	w.Header().Set("Content-Type", "application/json")
+	w.Header().Add("Status", "success")
 
 	for _, aRule := range h.s.Rules() {
 
@@ -50,12 +47,6 @@ func (h *apiHandler) GetAggregationRules(w http.ResponseWriter, _ *http.Request)
 
 		if _, err := w.Write(ruleJson); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		if _, err := w.Write([]byte("\n")); err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			h.errorLog.Println(err)
 			return
 		}
 
@@ -77,16 +68,16 @@ func (h *apiHandler) CreateAggregationRule(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
+	//добавить хеш по агругирующим в правиле , есть баг имена у правил разные а агриг рующие одинаковые
 	if h.s.HasRule(aRule.Name) {
-		w.Header().Set("Message", "rule already exists")
-		w.Header().Set("Status", " error "+strconv.Itoa(http.StatusConflict))
-
+		http.Error(w, "< Rule already exists \n", http.StatusConflict)
+		return
 	} else {
 		id := h.s.RulesLen() + 1
 		aRule.AggregationRuleId = id
 		h.s.SetRule(aRule.Name, aRule)
-		w.Header().Set("Message", "rule "+strconv.Itoa(id)+" created")
-		w.Header().Set("Status", "success")
+		w.Header().Add("Message", "rule "+strconv.Itoa(id)+" created")
+		w.Header().Add("Status", "success")
 
 	}
 
@@ -94,9 +85,6 @@ func (h *apiHandler) CreateAggregationRule(w http.ResponseWriter, r *http.Reques
 
 // RegisterOperation - counts aggregated based on the rules
 func (h *apiHandler) RegisterOperation(w http.ResponseWriter, r *http.Request) {
-	if h.s.RulesLen() == 0 {
-		return
-	}
 
 	mapping := map[string]interface{}{}
 
@@ -128,28 +116,13 @@ func (h *apiHandler) RegisterOperation(w http.ResponseWriter, r *http.Request) {
 		aRule := tempRule.(rule)
 
 		if h.s.HasCounter(keyCounter) {
-
 			_, tmpCounter := h.s.Counter(keyCounter)
 			c := tmpCounter.(counter)
+			increaseTheCounter(keyCounter, &h.s, c, aRule.AggregateValue, mapping)
 
-			if aRule.AggregateValue == count {
-				c.Value += 1
-				h.s.SetCounter(keyCounter, c)
-			} else {
-				c.Value += int(mapping[amount].(float64))
-				h.s.SetCounter(keyCounter, c)
-			}
 		} else {
 			aNewCounter := newCounter()
-			if aRule.AggregateValue == amount {
-				aNewCounter.Value = int(mapping[amount].(float64))
-			} else {
-				aNewCounter.Value++
-			}
-			idCounter := h.s.CounterLen()
-			aNewCounter.id = idCounter
-			h.s.SetCounter(keyCounter, aNewCounter)
-			h.s.AddToArchivist(aRule.AggregationRuleId, idCounter)
+			addTheCounter(keyCounter, aRule.AggregationRuleId, &h.s, aNewCounter, aRule.AggregateValue, mapping)
 		}
 	}
 

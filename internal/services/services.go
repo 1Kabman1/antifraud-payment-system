@@ -3,6 +3,7 @@ package services
 import (
 	"crypto/md5"
 	"errors"
+	"github.com/1Kabman1/antifraud-payment-system/internal/hashStorage"
 	"strconv"
 	"strings"
 )
@@ -64,4 +65,31 @@ func prepareTheDataForHashing(rules, operationProperties map[string]interface{})
 
 	}
 	return aggregatesBy, nil
+}
+
+func increaseTheCounter(keyCounter [16]byte, h *hashStorage.Storage, c counter,
+	AggregateValue string, mapping map[string]interface{}) {
+
+	if AggregateValue == count {
+		c.Value += 1
+		h.SetCounter(keyCounter, c)
+	} else {
+		c.Value += int(mapping[amount].(float64))
+		h.SetCounter(keyCounter, c)
+	}
+}
+
+func addTheCounter(keyCounter [16]byte, AggregationRuleId int, h *hashStorage.Storage, aNewCounter counter,
+	AggregateValue string, mapping map[string]interface{}) {
+
+	if AggregateValue == amount {
+		aNewCounter.Value = int(mapping[amount].(float64))
+	} else {
+		aNewCounter.Value++
+	}
+	idCounter := h.CounterLen()
+	aNewCounter.id = idCounter
+	h.SetCounter(keyCounter, aNewCounter)
+	h.AddToArchivist(AggregationRuleId, idCounter)
+
 }
