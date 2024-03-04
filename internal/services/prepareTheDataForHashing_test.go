@@ -21,15 +21,9 @@ func TestPrepareTheDataForHashing(t *testing.T) {
 		AggregateValue:    "amount",
 	}
 
-	rules := map[int]*hashStorage.Rule{}
-	rules[1] = &rule1
-	rules[2] = &rule2
+	rules := map[int]*hashStorage.Rule{1: &rule1, 2: &rule2}
 
-	payments := map[string]interface{}{}
-	payments["a"] = 1234.00
-	payments["b"] = "2"
-	payments["c"] = "1234"
-	payments["d"] = "2"
+	payments := map[string]interface{}{"a": 1234.00, "b": "2", "c": "1234", "d": "2"}
 
 	actual, _ := prepareTheDataForHashing(rules, payments)
 

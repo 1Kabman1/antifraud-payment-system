@@ -14,15 +14,15 @@ const (
 	amount        = "amount"
 )
 
-type apiHandler struct {
+type ApiHandler struct {
 	s        hashStorage.Storage
 	errorLog *log.Logger
 	infoLog  *log.Logger
 }
 
 // NewApiHandler - set storage and logs
-func NewApiHandler() apiHandler {
-	return apiHandler{
+func NewApiHandler() ApiHandler {
+	return ApiHandler{
 		s:        hashStorage.NewStorage(),
 		errorLog: log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile),
 		infoLog:  log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime),
@@ -30,7 +30,7 @@ func NewApiHandler() apiHandler {
 }
 
 // GetAggregationRules - Get aggregation data
-func (h *apiHandler) GetAggregationRules(w http.ResponseWriter, _ *http.Request) {
+func (h *ApiHandler) GetAggregationRules(w http.ResponseWriter, _ *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 
@@ -47,24 +47,29 @@ func (h *apiHandler) GetAggregationRules(w http.ResponseWriter, _ *http.Request)
 		return
 	}
 	if json.Valid(ruleJson) {
-		w.Write([]byte("Status " + "success \n"))
-		if _, err := w.Write(ruleJson); err != nil {
+		if _, err = w.Write([]byte("Status " + "success \n")); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-	} else {
 
+		if _, err = w.Write(ruleJson); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 	}
-
 }
 
 // CreateAggregationRule - create aggregation Rule
-func (h *apiHandler) CreateAggregationRule(w http.ResponseWriter, r *http.Request) {
+func (h *ApiHandler) CreateAggregationRule(w http.ResponseWriter, r *http.Request) {
 
 	aRule := hashStorage.NewRule()
 
 	if r.Body != nil {
-		defer r.Body.Close()
+		defer func() {
+			if err := r.Body.Close(); err != nil {
+				h.errorLog.Println(err)
+			}
+		}()
 	}
 
 	if err := json.NewDecoder(r.Body).Decode(&aRule); err != nil {
@@ -73,22 +78,25 @@ func (h *apiHandler) CreateAggregationRule(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	if h.s.SetRule(aRule.Name, &aRule) {
-		http.Error(w, "Rule already exists \n", http.StatusConflict)
+	h.s.SetRule(aRule.Name, &aRule)
+
+	if _, err := w.Write([]byte("Message " + "Rule " + strconv.Itoa(aRule.AggregationRuleId) + " created")); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
-	w.Write([]byte("Message " + "Rule " + strconv.Itoa(aRule.AggregationRuleId) + " created"))
-
 }
 
 // RegisterOperation - counts aggregated based on the rules
-func (h *apiHandler) RegisterOperation(w http.ResponseWriter, r *http.Request) {
+func (h *ApiHandler) RegisterOperation(w http.ResponseWriter, r *http.Request) {
 
 	payment := map[string]interface{}{}
 
 	if r.Body != nil {
-		defer r.Body.Close()
+		defer func() {
+			if err := r.Body.Close(); err != nil {
+				h.errorLog.Println(err)
+			}
+		}()
 	}
 
 	if err := json.NewDecoder(r.Body).Decode(&payment); err != nil {
@@ -105,10 +113,10 @@ func (h *apiHandler) RegisterOperation(w http.ResponseWriter, r *http.Request) {
 	}
 
 	for nameRule, keyCounter := range calculateHash(aggregatesBy) {
-		err, aRule := h.s.Rule(nameRule)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			h.errorLog.Println(err)
+		err_, aRule := h.s.Rule(nameRule)
+		if err_ != nil {
+			http.Error(w, err_.Error(), http.StatusInternalServerError)
+			h.errorLog.Println(err_)
 			return
 		}
 

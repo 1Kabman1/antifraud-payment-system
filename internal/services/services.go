@@ -27,11 +27,10 @@ func prepareTheDataForHashing(rules map[int]*hashStorage.Rule, payment map[strin
 	var aBuilder strings.Builder
 
 	for _, rule := range rules {
-		aggregate := ""
 		var flag bool
 
-		for _, agg := range rule.AggregateBy {
-			v, ok := payment[agg]
+		for _, aggName := range rule.AggregateBy {
+			v, ok := payment[aggName]
 			if !ok {
 				flag = true
 				aBuilder.Reset()
@@ -41,28 +40,23 @@ func prepareTheDataForHashing(rules map[int]*hashStorage.Rule, payment map[strin
 			switch aInterface := v.(type) {
 			case float64:
 				intInterface := int(aInterface)
-				_, err := aBuilder.WriteString(strconv.Itoa(intInterface))
-				if err != nil {
+				if _, err := aBuilder.WriteString(strconv.Itoa(intInterface)); err != nil {
 					return nil, errors.New("the type is not float")
 				}
-				aBuilder.WriteString(agg) // добавляю имя агрегирующего чтобы убрать совпадение
+				aBuilder.WriteString(aggName)
 			case string:
-				_, err := aBuilder.WriteString(aInterface)
-				if err != nil {
+				if _, err := aBuilder.WriteString(aInterface); err != nil {
 					return nil, errors.New("the type is not string")
 				}
-				aBuilder.WriteString(agg) // добавляю имя агрегирующего чтобы убрать совпадение
+				aBuilder.WriteString(aggName)
 			}
-
 		}
 
 		if !flag {
 			aBuilder.WriteString(strconv.Itoa(rule.AggregationRuleId))
-			aggregate = aBuilder.String()
-			aggregatesBy[rule.AggregationRuleId] = aggregate
+			aggregatesBy[rule.AggregationRuleId] = aBuilder.String()
 			aBuilder.Reset()
 		}
-
 	}
 	return aggregatesBy, nil
 }

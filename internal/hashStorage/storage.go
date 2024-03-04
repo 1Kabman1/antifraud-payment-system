@@ -21,26 +21,18 @@ func NewStorage() Storage {
 }
 
 // SetRule - set rule in map
-func (s *Storage) SetRule(name string, rule *Rule) bool {
+func (s *Storage) SetRule(name string, rule *Rule) {
 	id := s.RulesLen() + 1
-	if s.HasRule(id) {
-		return true
-	}
 	rule.AggregationRuleId = id
 	rule.Name = name
 	s.rules[id] = rule
-	return false
+
 }
 
 // RulesLen - returns the length of the map
 func (s *Storage) RulesLen() int {
 	return len(s.rules)
 }
-
-//// IdRule - Return id rule
-//func (s *Storage) IdRule(id int) int {
-//	return s.rules[id].AggregationRuleId
-//}
 
 // Rules - returns rules
 func (s *Storage) Rules() map[int]*Rule {
@@ -49,14 +41,12 @@ func (s *Storage) Rules() map[int]*Rule {
 
 // Rule - returns a rule
 func (s *Storage) Rule(id int) (error, *Rule) {
-	err := errors.New("Key is not correct")
 	_, ok := s.rules[id]
 	if ok {
 		r := s.rules[id]
 		return nil, r
 	}
-
-	return err, &Rule{}
+	return errors.New("Key is not correct"), &Rule{}
 }
 
 // HasRule - return bool
@@ -72,23 +62,22 @@ func (s *Storage) HasCounter(key [16]byte) bool {
 }
 
 // SetCounter - sets id for c
-func (s *Storage) SetCounter(key [16]byte, id int) {
+func (s *Storage) SetCounter(key [16]byte, idRule int) {
 	aNewCounter := NewCounter()
 	idCounter := s.CounterLen() + 1
 	aNewCounter.id = idCounter
 	s.counter[key] = &aNewCounter
-	s.AddToArchivist(id, idCounter)
+	s.AddToArchivist(idRule, idCounter)
 }
 
 // Counter - return Counter
 func (s *Storage) Counter(key [16]byte) (error, *Counter) {
-	err := errors.New("Key is not correct")
 	_, ok := s.counter[key]
 	if ok {
 		c := s.counter[key]
 		return nil, c
 	}
-	return err, &Counter{}
+	return errors.New("Key is not correct"), &Counter{}
 }
 
 // CounterLen - return len
@@ -101,8 +90,8 @@ func (s *Storage) AddToArchivist(idRule, idCounter int) {
 	s.archivist[idRule] = append(s.archivist[idRule], idCounter)
 }
 
-// Archivist - is for test
-func (s *Storage) Archivist(key string) (int, error) {
+// ArchivistForTest - is for test
+func (s *Storage) ArchivistForTest(key string) (int, error) {
 	id, err := strconv.Atoi(key)
 	if err != nil {
 		return 0, err

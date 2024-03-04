@@ -40,13 +40,13 @@ func Test_Archivist(t *testing.T) {
 
 	h.RegisterOperation(&w, r)
 
-	count1, _ := h.s.Archivist("1")
+	count1, _ := h.s.ArchivistForTest("1")
 
 	if !assert.Equal(t, count1, 2) {
 		log.Panic()
 	}
 
-	count2, _ := h.s.Archivist("2")
+	count2, _ := h.s.ArchivistForTest("2")
 
 	if !assert.Equal(t, count2, 2) {
 		log.Panic()
