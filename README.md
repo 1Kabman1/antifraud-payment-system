@@ -1,11 +1,18 @@
 #  Начало работы:
-Для начала работы Вам нужно клонировать репозиторий  с сайта GitHub с помощью команды **`git clone git@github.com:1Kabman1/antifraud-payment-system.git`**
-После чего вам следует произвести тестирование приложения с помощью команды **`go test ./...`** есди тестирование пройдет успешно,
-запустите приложение с помощью комнды **`go run .`** ,  обязательно убедитесь что Вы находитесь в директории приложения.
+Для начала работы Вам нужно клонировать репозиторий с сайта GitHub с помощью команды 
+**`git clone git@github.com:1Kabman1/antifraud-payment-system.git`**
+После чего вам следует произвести тестирование приложения с помощью команды **`go test ./...`** если тестирование
+пройдет успешно, запустите приложение с помощью команды **`go run .`** , обязательно убедитесь что Вы находитесь в 
+директории приложения.
+
 ## POST// создание  Rule
+Чтобы создать правило агрегации нужно отправить POST запрос на url "http://127.0.0.1:8080/aggregation_rule/create"
 
-Чтобы создать правило агрегации нужно отправить POST запрос на url "http://127.0.0.1:8080/aggregation_rule/create" в формате JSON:
+   `**curl -XPOST -v  'http://127.0.0.1:8080/aggregation_rule/create' -H 'Content-Type: appliction/json' -d {}**`
 
+в формате JSON:
+
+Пример №1:
 ```json
 {
     "Name": "<уникальное имя>",
@@ -13,39 +20,82 @@
     "AggregateValue": "<сумма или счетчик>"
 }
 ```
-
-Пример:
+Пример №2:
 
 ```json
 {
     "Name": "Amount per client",
     "AggregateBy": ["clientId", "bank_card"],
     "AggregateValue": "amount"
-}
+} 
 ```
-
-В следствии чего программа создаст правила агрегации с уникальными именами, уникальным id. Если правило уже существует, программа отправит ответ 409.
-
-## GET// запрос Rule 
-Чтобы получить данные по созданным правилам, нужно отправить GET запрос на url "http://127.0.0.1:8080/aggregation_rules/get".
+В следствии чего программа создаст правила агрегации с уникальным id. Имя правила Вы задаете сами, имена могут быть 
+одинаковые и агрегируемые свойства, но при этом правила все равно будут уникальны по отношению друг к другу, 
+уникальность правилам придает уникальный id для каждого правила. 
 
 Пример:
- 
 ```json
 {
-    "id":1,
-    "Name":"Amount per client",
-    "AggregateBy":["clientId", "bank_card"],
-    "AggregateValue":"amount"
+  "1": {
+    "AggregationRuleId": 1,
+    "Name": "Amount per client",
+    "AggregateBy": [
+      "clientId",
+      "bank_card"
+    ],
+    "AggregateValue": "amount"
+  },
+  "2": {
+    "AggregationRuleId": 2,
+    "Name": "Amount per client",
+    "AggregateBy": [
+      "clientId",
+      "bank_card"
+    ],
+    "AggregateValue": "amount"
+  }
 }
 ```
+
+## GET// запрос Rule 
+Чтобы получить данные по созданным правилам, нужно отправить GET запрос на 
+url "http://127.0.0.1:8080/aggregation_rules/get".
+
+**`curl -XGET -v 'http://127.0.0.1:8080/aggregation_rules/get'`**
 
 В следствии чего программа вернет ответ в JSON формате. (! Программа возвращает полный список правил)
 
+Пример:
+
+```json
+{
+  "1": {
+    "AggregationRuleId": 1,
+    "Name": "Amount per client",
+    "AggregateBy": [
+      "clientId",
+      "bank_card"
+    ],
+    "AggregateValue": "amount"
+  },
+  "2": {
+    "AggregationRuleId": 2,
+    "Name": "Amount per client",
+    "AggregateBy": [
+      "clientId",
+      "bank_card"
+    ],
+    "AggregateValue": "amount"
+  }
+}
+```
 
 ## POST // Отслеживание агрегируемого  
 
-Чтобы начать отслеживать аргументированное на основании созданных правил отправьте POST  запрос на url  "http://127.0.0.1:8080/register"
+Чтобы начать отслеживать аргументированное на основании созданных правил отправьте POST запрос на 
+url "http://127.0.0.1:8080/register"
+
+**`curl -POST -v  'http://127.0.0.1:8080/register' -H 'Content-Type: appliction/json' -d '{}'`**
 
 Пример:
 
@@ -59,5 +109,5 @@
 "currency": "RUB"
 }
 ```
-Программа проверит данное агрегируемое по всем правилам, а так же запишет.
+Программа проверит данное агрегируемое по всем правилам, а так же зафиксирует "count" OR "amount".
  
