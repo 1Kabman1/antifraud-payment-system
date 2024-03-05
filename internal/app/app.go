@@ -1,35 +1,11 @@
 package app
 
 import (
-	"flag"
-	"github.com/1Kabman1/Antifraud-payment-system.git/internal/transport/rest"
-	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/chi/v5/middleware"
-	"log"
-	"net/http"
+	"github.com/1Kabman1/antifraud-payment-system/internal/transport/rest"
 )
 
-func StartAntifaud() {
+func StartAntifaud() error {
 
-	const (
-		CREATE = "/aggregation_rule/create"
-		GET    = "/aggregation_rules/get"
-		START  = "Star server on port "
-		PORT   = ":8080"
-		AD     = "HTTP address"
-		ADDR   = "addr"
-	)
+	return rest.StartHandler()
 
-	addr := flag.String(ADDR, PORT, AD)
-	flag.Parse()
-
-	s := rest.NewStorage()
-
-	r := chi.NewRouter()
-	r.Use(middleware.Logger)
-	r.Post(CREATE, s.CreateAggregationRule)
-	r.Get(GET, s.GetAggregationData)
-
-	log.Println(START + *addr)
-	log.Fatal(http.ListenAndServe(*addr, r))
 }
