@@ -1,6 +1,7 @@
 package services
 
 import (
+	"bytes"
 	"encoding/json"
 	"github.com/1Kabman1/antifraud-payment-system/internal/hashStorage"
 	"log"
@@ -62,6 +63,7 @@ func (h *ApiHandler) GetAggregationRules(w http.ResponseWriter, _ *http.Request)
 // CreateAggregationRule - create aggregation Rule
 func (h *ApiHandler) CreateAggregationRule(w http.ResponseWriter, r *http.Request) {
 
+	var buf bytes.Buffer
 	aRule := hashStorage.NewRule()
 
 	if r.Body != nil {
@@ -72,11 +74,8 @@ func (h *ApiHandler) CreateAggregationRule(w http.ResponseWriter, r *http.Reques
 		}()
 	}
 
-	if err := json.NewDecoder(r.Body).Decode(&aRule); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		h.errorLog.Println(err)
-		return
-	}
+	buf.ReadFrom(r.Body)
+	json.Unmarshal(buf.Bytes(), &aRule)
 
 	h.s.SetRule(aRule.Name, &aRule)
 
