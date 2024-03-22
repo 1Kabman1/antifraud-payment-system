@@ -90,8 +90,8 @@ func (s *Storage) AddToArchivist(idRule, idCounter int) {
 	s.archivist[idRule] = append(s.archivist[idRule], idCounter)
 }
 
-// ArchivistForTest - is for test
-func (s *Storage) ArchivistForTest(key string) (int, error) {
+// ArchivistLen - is for test
+func (s *Storage) ArchivistLen(key string) (int, error) {
 	id, err := strconv.Atoi(key)
 	if err != nil {
 		return 0, err
