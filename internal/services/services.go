@@ -43,12 +43,10 @@ func prepareTheDataForHashing(rules map[int]*hashStorage.Rule, payment map[strin
 				if _, err := aBuilder.WriteString(strconv.Itoa(intInterface)); err != nil {
 					return nil, errors.New("the type is not float")
 				}
-			//	aBuilder.WriteString(aggName)
 			case string:
 				if _, err := aBuilder.WriteString(aInterface); err != nil {
 					return nil, errors.New("the type is not string")
 				}
-				//aBuilder.WriteString(aggName)
 			}
 		}
 

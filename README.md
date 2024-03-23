@@ -27,7 +27,6 @@ bashScript остановит программу. Так же он провер�
 Чтобы создать правило агрегации, нужно отправить POST запрос на url "http://127.0.0.1:8080/aggregation_rule/create"
 
 Пример:
-
    localhost:    
    **`curl -XPOST -v  'http://127.0.0.1:8080/aggregation_rule/create' -H 'Content-Type: appliction/json' -d '{}'`**
    или на сервер через  ssh:
@@ -61,30 +60,7 @@ bashScript остановит программу. Так же он провер�
 уникальность правилам придает уникальный id для каждого правила. Так же Вы можете указать интервал времени,   
 _`"Duration" `_  - устанавливает интервал времени за который агрегируемое будет учитываться, а именно за последний
 указанный интервал времени. Формат ввода "0h1m1s"  
- 
-Пример:
-```json
-{
-  "1": {
-    "AggregationRuleId": 1,
-    "Name": "Amount per client",
-    "AggregateBy": [
-      "client_id",
-      "payment_method_type"
-    ],
-    "AggregateValue": "amount"
-  },
-  "2": {
-    "AggregationRuleId": 2,
-    "Name": "Amount per client",
-    "AggregateBy": [
-      "client_id",
-      "payment_method_type"
-    ],
-    "AggregateValue": "amount"
-  }
-}
-```
+
 
 ## GET// запрос Rule 
 Чтобы получить данные по созданным правилам, нужно отправить GET запрос на 
@@ -101,24 +77,18 @@ localhost:
 
 ```json
 {
-  "1": {
-    "AggregationRuleId": 1,
-    "Name": "Amount per client",
-    "AggregateBy": [
-      "client_id",
-      "payment_method_type"
-    ],
-    "AggregateValue": "amount"
-  },
+   "1":{
+      "AggregationRuleId":1,
+      "Name":"Amount per client",
+      "AggregateBy":["client_id","payment_method_type"],
+      "AggregateValue":"amount",
+      "Duration":83483},
   "2": {
-    "AggregationRuleId": 2,
-    "Name": "Amount per client",
-    "AggregateBy": [
-      "client_id",
-      "payment_method_type"
-    ],
-    "AggregateValue": "amount"
-  }
+     "AggregationRuleId":1,
+     "Name":"Amount per client",
+     "AggregateBy":["client_id","payment_method_type"],
+     "AggregateValue":"amount",
+     "Duration":83483}
 }
 ```
 
@@ -130,7 +100,7 @@ url "http://127.0.0.1:8080/register"
 localhost:
 **`curl -POST -v  'http://127.0.0.1:8080/register' -H 'Content-Type: appliction/json' -d '{}'`**
 
-или на сервер через  ssh:
+или на сервер через ssh:
 **`ssh kaban@192.168.122.171 "curl -X POST -v -d '{}' -H 'Content-Type: application/json'
 http://127.0.0.1:8080/aggregation_rule/create"`**
 
