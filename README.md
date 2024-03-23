@@ -51,7 +51,7 @@ bashScript остановит программу. Так же он провер�
 ```json
 {
     "Name": "Amount per client",
-    "AggregateBy": ["clientId", "bank_card"],
+    "AggregateBy": ["client_id", "payment_method_type"],
     "AggregateValue": "amount",
     "Duration": "0h1m1s" 
 } 
@@ -69,8 +69,8 @@ _`"Duration" `_  - устанавливает интервал времени з
     "AggregationRuleId": 1,
     "Name": "Amount per client",
     "AggregateBy": [
-      "clientId",
-      "bank_card"
+      "client_id",
+      "payment_method_type"
     ],
     "AggregateValue": "amount"
   },
@@ -78,8 +78,8 @@ _`"Duration" `_  - устанавливает интервал времени з
     "AggregationRuleId": 2,
     "Name": "Amount per client",
     "AggregateBy": [
-      "clientId",
-      "bank_card"
+      "client_id",
+      "payment_method_type"
     ],
     "AggregateValue": "amount"
   }
@@ -105,8 +105,8 @@ localhost:
     "AggregationRuleId": 1,
     "Name": "Amount per client",
     "AggregateBy": [
-      "clientId",
-      "bank_card"
+      "client_id",
+      "payment_method_type"
     ],
     "AggregateValue": "amount"
   },
@@ -114,8 +114,8 @@ localhost:
     "AggregationRuleId": 2,
     "Name": "Amount per client",
     "AggregateBy": [
-      "clientId",
-      "bank_card"
+      "client_id",
+      "payment_method_type"
     ],
     "AggregateValue": "amount"
   }

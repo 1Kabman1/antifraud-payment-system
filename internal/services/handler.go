@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"time"
 )
 
 const (
@@ -135,9 +136,14 @@ func (h *ApiHandler) RegisterOperation(w http.ResponseWriter, r *http.Request) {
 		_, c := h.s.Counter(keyCounter)
 
 		if aRule.AggregateValue == count {
-			c.Value += 1
+			c.Value.Value += 1
+			c.TotalValue += 1
+			c.Value.Time = time.Now()
 		} else {
-			c.Value += int(payment[amount].(float64))
+			aAmount := int(payment[amount].(float64))
+			c.Value.Value += aAmount
+			c.TotalValue += aAmount
+			c.Value.Time = time.Now()
 		}
 	}
 }

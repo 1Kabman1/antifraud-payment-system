@@ -27,6 +27,6 @@ func TestPrepareTheDataForHashing(t *testing.T) {
 
 	actual, _ := prepareTheDataForHashing(rules, payments)
 
-	expected := map[int]string{0: "1234a2b0", 1: "1234c2d1"}
+	expected := map[int]string{0: "123420", 1: "123421"}
 	assert.Equal(t, expected, actual)
 }

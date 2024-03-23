@@ -44,15 +44,15 @@ func TestCalculateTheAggregated(t *testing.T) {
 
 	body := `{"a": 1, "b": "2", "c": "1", "d": "2", "amount": 100.00}`
 
-	var expectedKeyCounter1 = [16]byte{144, 205, 130, 169, 81, 153, 100, 226, 115, 20, 161, 23, 204, 35, 219, 186}
-	var expectedKeyCounter2 = [16]byte{120, 246, 85, 64, 24, 36, 1, 115, 223, 251, 47, 194, 246, 149, 48, 110}
+	var expectedKeyCounter1 = [16]byte{160, 160, 128, 244, 46, 111, 19, 179, 162, 223, 19, 63, 7, 48, 149, 221}
+	var expectedKeyCounter2 = [16]byte{76, 86, 255, 76, 228, 170, 249, 87, 58, 165, 223, 249, 19, 223, 153, 122}
 
 	r, _ := http.NewRequest("POST", "http://127.0.0.1:8080/register", strings.NewReader(body))
 
 	h.RegisterOperation(&w, r)
 
 	_, counter1 := h.s.Counter(expectedKeyCounter1)
-	if !assert.Equal(t, counter1.Value, 1) {
+	if !assert.Equal(t, counter1.Value.Value, 100) {
 		log.Panic()
 	}
 
@@ -61,7 +61,7 @@ func TestCalculateTheAggregated(t *testing.T) {
 	h.RegisterOperation(&w, r)
 
 	_, counter2 := h.s.Counter(expectedKeyCounter2)
-	if !assert.Equal(t, counter2.Value, 200) {
+	if !assert.Equal(t, counter2.Value.Value, 2) {
 		log.Panic()
 	}
 
