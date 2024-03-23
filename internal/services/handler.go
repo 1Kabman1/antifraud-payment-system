@@ -74,8 +74,17 @@ func (h *ApiHandler) CreateAggregationRule(w http.ResponseWriter, r *http.Reques
 		}()
 	}
 
-	buf.ReadFrom(r.Body)
-	json.Unmarshal(buf.Bytes(), &aRule)
+	_, err := buf.ReadFrom(r.Body)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	err = json.Unmarshal(buf.Bytes(), &aRule)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 
 	h.s.SetRule(aRule.Name, &aRule)
 
