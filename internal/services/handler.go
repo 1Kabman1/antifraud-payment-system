@@ -134,16 +134,20 @@ func (h *ApiHandler) RegisterOperation(w http.ResponseWriter, r *http.Request) {
 		}
 
 		_, c := h.s.Counter(keyCounter)
+		o := hashStorage.NewOrder()
 
 		if aRule.AggregateValue == count {
-			c.Value.Value += 1
+			o.Value = 1
+			o.Time = time.Now()
 			c.TotalValue += 1
-			c.Value.Time = time.Now()
+			//c.Value = append(c.Value, o)
 		} else {
 			aAmount := int(payment[amount].(float64))
-			c.Value.Value += aAmount
+			o.Value = aAmount
+			o.Time = time.Now()
 			c.TotalValue += aAmount
-			c.Value.Time = time.Now()
+			//c.Value = append(c.Value, o)
 		}
+		c.Value = append(c.Value, o)
 	}
 }
