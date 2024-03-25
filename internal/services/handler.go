@@ -1,12 +1,14 @@
 package services
 
 import (
+	"bytes"
 	"encoding/json"
 	"github.com/1Kabman1/antifraud-payment-system/internal/hashStorage"
 	"log"
 	"net/http"
 	"os"
 	"strconv"
+	"time"
 )
 
 const (
@@ -62,6 +64,7 @@ func (h *ApiHandler) GetAggregationRules(w http.ResponseWriter, _ *http.Request)
 // CreateAggregationRule - create aggregation Rule
 func (h *ApiHandler) CreateAggregationRule(w http.ResponseWriter, r *http.Request) {
 
+	var buf bytes.Buffer
 	aRule := hashStorage.NewRule()
 
 	if r.Body != nil {
@@ -72,9 +75,15 @@ func (h *ApiHandler) CreateAggregationRule(w http.ResponseWriter, r *http.Reques
 		}()
 	}
 
-	if err := json.NewDecoder(r.Body).Decode(&aRule); err != nil {
+	_, err := buf.ReadFrom(r.Body)
+	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
-		h.errorLog.Println(err)
+		return
+	}
+
+	err = json.Unmarshal(buf.Bytes(), &aRule)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -125,11 +134,20 @@ func (h *ApiHandler) RegisterOperation(w http.ResponseWriter, r *http.Request) {
 		}
 
 		_, c := h.s.Counter(keyCounter)
+		o := hashStorage.NewOrder()
 
 		if aRule.AggregateValue == count {
-			c.Value += 1
+			o.Value = 1
+			o.Time = time.Now()
+			c.TotalValue += 1
+			//c.Value = append(c.Value, o)
 		} else {
-			c.Value += int(payment[amount].(float64))
+			aAmount := int(payment[amount].(float64))
+			o.Value = aAmount
+			o.Time = time.Now()
+			c.TotalValue += aAmount
+			//c.Value = append(c.Value, o)
 		}
+		c.Value = append(c.Value, o)
 	}
 }
