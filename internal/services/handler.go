@@ -74,9 +74,13 @@ func (h *ApiHandler) CreateAggregationRule(w http.ResponseWriter, r *http.Reques
 		}()
 	}
 
-	buf.ReadFrom(r.Body)
-	json.Unmarshal(buf.Bytes(), &aRule)
+	if _, err := buf.ReadFrom(r.Body); err != nil {
+		return
+	}
 
+	if err := json.Unmarshal(buf.Bytes(), &aRule); err != nil {
+		return
+	}
 	h.s.SetRule(aRule.Name, &aRule)
 
 	if _, err := w.Write([]byte("Message " + "Rule " + strconv.Itoa(aRule.AggregationRuleId) + " created")); err != nil {

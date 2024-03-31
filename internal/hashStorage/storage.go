@@ -46,7 +46,7 @@ func (s *Storage) Rule(id int) (error, *Rule) {
 		r := s.rules[id]
 		return nil, r
 	}
-	return errors.New("Key is not correct"), &Rule{}
+	return errors.New(" A Key is not correct"), &Rule{}
 }
 
 // HasRule - return bool
@@ -77,7 +77,7 @@ func (s *Storage) Counter(key [16]byte) (error, *Counter) {
 		c := s.counter[key]
 		return nil, c
 	}
-	return errors.New("Key is not correct"), &Counter{}
+	return errors.New("A Key is not correct"), &Counter{}
 }
 
 // CounterLen - return len

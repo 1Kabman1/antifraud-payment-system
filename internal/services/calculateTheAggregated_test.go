@@ -21,7 +21,7 @@ func (m *myResponseWriterTwo) Write([]byte) (int, error) {
 
 	return 0, nil
 }
-func (m *myResponseWriterTwo) WriteHeader(statusCode int) {}
+func (m *myResponseWriterTwo) WriteHeader(_ int) {}
 
 func TestCalculateTheAggregated(t *testing.T) {
 

@@ -40,7 +40,7 @@ func (m *myResponseWriter) Write(w []byte) (int, error) {
 	m.flag = true
 	return 0, nil
 }
-func (m *myResponseWriter) WriteHeader(statusCode int) {}
+func (m *myResponseWriter) WriteHeader(_ int) {}
 
 func TestAggregationData(t *testing.T) {
 
