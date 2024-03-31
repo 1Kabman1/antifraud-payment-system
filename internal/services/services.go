@@ -27,12 +27,10 @@ func prepareTheDataForHashing(rules map[int]*hashStorage.Rule, payment map[strin
 	var aBuilder strings.Builder
 
 	for _, rule := range rules {
-		var flag bool
 
 		for _, aggName := range rule.AggregateBy {
 			v, ok := payment[aggName]
 			if !ok {
-				flag = true
 				aBuilder.Reset()
 				break
 			}
@@ -52,11 +50,10 @@ func prepareTheDataForHashing(rules map[int]*hashStorage.Rule, payment map[strin
 			}
 		}
 
-		if !flag {
-			aBuilder.WriteString(strconv.Itoa(rule.AggregationRuleId))
-			aggregatesBy[rule.AggregationRuleId] = aBuilder.String()
-			aBuilder.Reset()
-		}
+		aBuilder.WriteString(strconv.Itoa(rule.AggregationRuleId))
+		aggregatesBy[rule.AggregationRuleId] = aBuilder.String()
+		aBuilder.Reset()
 	}
+
 	return aggregatesBy, nil
 }
