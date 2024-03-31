@@ -68,24 +68,34 @@ func (s *Storage) HasCounter(key [16]byte) bool {
 // SetCounter - sets id for c
 func (s *Storage) SetCounter(key [16]byte, idRule int) {
 	if !s.HasCounter(key) {
+
 		aNewCounter := NewCounter()
+		aNewCounter.Values = new(Node)
+
 		idCounter := s.CounterLen() + 1
 		aNewCounter.id = idCounter
 		s.counter[key] = &aNewCounter
 		s.AddToArchivist(idRule, idCounter)
 	}
-
 }
 
 // IncreaseValue - Increases value in counter
-func (s *Storage) IncreaseValue(key [16]byte, AggregateValue string, aAmount float64) {
+func (s *Storage) IncreaseValue(key [16]byte, AggregateValue string,
+	aAmount float64, duration int) {
+
 	_, c := s.Counter(key)
 
+	node := new(Node)
+
 	if AggregateValue == count {
-		c.Value += 1
+		c.TotalValue += 1
+		node.Value = 1
 	} else {
-		c.Value += int(aAmount)
+		c.TotalValue += int(aAmount)
+		node.Value = int(aAmount)
 	}
+	node.SetTimeOfExistence(duration)
+	c.Values.PushBack(node)
 }
 
 // Counter - return Counter

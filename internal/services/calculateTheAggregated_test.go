@@ -52,7 +52,7 @@ func TestCalculateTheAggregated(t *testing.T) {
 	h.RegisterOperation(&w, r)
 
 	_, counter1 := h.s.Counter(expectedKeyCounter1)
-	if !assert.Equal(t, counter1.Value, 1) {
+	if !assert.Equal(t, counter1.TotalValue, 1) {
 		log.Panic()
 	}
 
@@ -61,7 +61,7 @@ func TestCalculateTheAggregated(t *testing.T) {
 	h.RegisterOperation(&w, r)
 
 	_, counter2 := h.s.Counter(expectedKeyCounter2)
-	if !assert.Equal(t, counter2.Value, 200) {
+	if !assert.Equal(t, counter2.TotalValue, 200) {
 		log.Panic()
 	}
 
@@ -98,7 +98,7 @@ func TestCalculateTheAggregatedIdenticalAggregateBy(t *testing.T) {
 
 	_, counter1 := h.s.Counter(expectedKeyCounter1)
 	_, counter2 := h.s.Counter(expectedKeyCounter2)
-	if !assert.Equal(t, counter1.Value, counter2.Value) {
+	if !assert.Equal(t, counter1.TotalValue, counter2.TotalValue) {
 		log.Panic()
 	}
 

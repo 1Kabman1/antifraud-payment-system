@@ -1,8 +1,9 @@
 package hashStorage
 
 type Counter struct {
-	id    int
-	Value int
+	id         int
+	TotalValue int
+	Values     *Node
 }
 
 func NewCounter() Counter {

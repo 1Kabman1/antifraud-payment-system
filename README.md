@@ -41,7 +41,8 @@ bashScript остановит программу. Так же он провер�
 {
     "Name": "<имя для пользователя, для удобства>",
     "AggregateBy": "<агрегируемые свойства>",
-    "AggregateValue": "<сумма или счетчик>"
+    "AggregateValue": "<сумма или счетчик>",
+    "Duration": "<время жизни агрегируемого>"
 }
 ```
 Пример №2:
@@ -50,9 +51,13 @@ bashScript остановит программу. Так же он провер�
 {
     "Name": "Amount per client",
     "AggregateBy": ["clientId", "bank_card"],
-    "AggregateValue": "amount"
+    "AggregateValue": "amount",
+     "Duration":  "0h1m23s" 
 } 
 ```
+
+Обратите внимание на формат временного отрезка "0h1m23s"
+
 В следствии программа создаст правила агрегации с уникальным id. Имя правила Вы задаете сами, имена могут быть 
 одинаковые и агрегируемые свойства, но при этом правила все равно будут уникальны по отношению друг к другу, 
 уникальность правилам придает уникальный id для каждого правила. 
@@ -60,24 +65,26 @@ bashScript остановит программу. Так же он провер�
 Пример:
 ```json
 {
-  "1": {
-    "AggregationRuleId": 1,
-    "Name": "Amount per client",
-    "AggregateBy": [
-      "clientId",
-      "bank_card"
-    ],
-    "AggregateValue": "amount"
-  },
-  "2": {
-    "AggregationRuleId": 2,
-    "Name": "Amount per client",
-    "AggregateBy": [
-      "clientId",
-      "bank_card"
-    ],
-    "AggregateValue": "amount"
-  }
+   "1": {
+      "AggregationRuleId": 1,
+      "Name": "Amount per client",
+      "AggregateBy": [
+         "clientId",
+         "bank_card"
+      ],
+      "AggregateValue": "amount",
+      "Duration":{"Duration":39732}
+   },
+   "2": {
+      "AggregationRuleId": 2,
+      "Name": "Amount per client",
+      "AggregateBy": [
+         "clientId",
+         "bank_card"
+      ],
+      "AggregateValue": "amount",
+      "Duration":{"Duration":39732}
+   }
 }
 ```
 
@@ -103,7 +110,8 @@ localhost:
       "clientId",
       "bank_card"
     ],
-    "AggregateValue": "amount"
+    "AggregateValue": "amount",
+     "Duration":{"Duration":39732}
   },
   "2": {
     "AggregationRuleId": 2,
@@ -112,7 +120,8 @@ localhost:
       "clientId",
       "bank_card"
     ],
-    "AggregateValue": "amount"
+    "AggregateValue": "amount",
+     "Duration":{"Duration":39732}
   }
 }
 ```
