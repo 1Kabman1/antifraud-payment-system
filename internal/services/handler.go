@@ -11,8 +11,7 @@ import (
 )
 
 const (
-	count  string = "count"
-	amount        = "amount"
+	amount = "amount"
 )
 
 type ApiHandler struct {
@@ -123,16 +122,9 @@ func (h *ApiHandler) RegisterOperation(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		if !h.s.HasCounter(keyCounter) {
-			h.s.SetCounter(keyCounter, aRule.AggregationRuleId)
-		}
+		h.s.SetCounter(keyCounter, aRule.AggregationRuleId)
 
-		_, c := h.s.Counter(keyCounter)
+		h.s.IncreaseValue(keyCounter, aRule.AggregateValue, payment[amount].(float64))
 
-		if aRule.AggregateValue == count {
-			c.Value += 1
-		} else {
-			c.Value += int(payment[amount].(float64))
-		}
 	}
 }

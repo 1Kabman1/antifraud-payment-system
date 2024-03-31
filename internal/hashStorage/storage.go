@@ -5,6 +5,10 @@ import (
 	"strconv"
 )
 
+const (
+	count string = "count"
+)
+
 type Storage struct {
 	rules     map[int]*Rule
 	counter   map[[16]byte]*Counter
@@ -63,11 +67,25 @@ func (s *Storage) HasCounter(key [16]byte) bool {
 
 // SetCounter - sets id for c
 func (s *Storage) SetCounter(key [16]byte, idRule int) {
-	aNewCounter := NewCounter()
-	idCounter := s.CounterLen() + 1
-	aNewCounter.id = idCounter
-	s.counter[key] = &aNewCounter
-	s.AddToArchivist(idRule, idCounter)
+	if !s.HasCounter(key) {
+		aNewCounter := NewCounter()
+		idCounter := s.CounterLen() + 1
+		aNewCounter.id = idCounter
+		s.counter[key] = &aNewCounter
+		s.AddToArchivist(idRule, idCounter)
+	}
+
+}
+
+// IncreaseValue - Increases value in counter
+func (s *Storage) IncreaseValue(key [16]byte, AggregateValue string, aAmount float64) {
+	_, c := s.Counter(key)
+
+	if AggregateValue == count {
+		c.Value += 1
+	} else {
+		c.Value += int(aAmount)
+	}
 }
 
 // Counter - return Counter
