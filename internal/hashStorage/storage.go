@@ -1,8 +1,10 @@
 package hashStorage
 
 import (
+	"container/list"
 	"errors"
 	"strconv"
+	"time"
 )
 
 const (
@@ -68,10 +70,8 @@ func (s *Storage) HasCounter(key [16]byte) bool {
 // SetCounter - sets id for c
 func (s *Storage) SetCounter(key [16]byte, idRule int) {
 	if !s.HasCounter(key) {
-
 		aNewCounter := NewCounter()
-		aNewCounter.Values = new(Node)
-
+		aNewCounter.Values = list.New()
 		idCounter := s.CounterLen() + 1
 		aNewCounter.id = idCounter
 		s.counter[key] = &aNewCounter
@@ -82,20 +82,19 @@ func (s *Storage) SetCounter(key [16]byte, idRule int) {
 // IncreaseValue - Increases value in counter
 func (s *Storage) IncreaseValue(key [16]byte, AggregateValue string,
 	aAmount float64, duration int) {
-
 	_, c := s.Counter(key)
-
-	node := new(Node)
-
+	ord := NewOrder()
 	if AggregateValue == count {
 		c.TotalValue += 1
-		node.Value = 1
+		ord.value = 1
 	} else {
 		c.TotalValue += int(aAmount)
-		node.Value = int(aAmount)
+		ord.value = int(aAmount)
 	}
-	node.SetTimeOfExistence(duration)
-	c.Values.PushBack(node)
+	ord.t.Duration = time.Now().Unix()
+	c.Values.PushBack(ord)
+	c.DeleteExpiredOnes()
+
 }
 
 // Counter - return Counter
