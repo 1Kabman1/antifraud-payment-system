@@ -5,15 +5,15 @@ import (
 	"time"
 )
 
-type aTimeDuration struct {
-	Duration int64
+type timeDuration struct {
+	Duration int
 }
 
 //format time "0h1m1s"
 
-func (t *aTimeDuration) UnmarshalJSON(data []byte) error {
+func (t *timeDuration) UnmarshalJSON(data []byte) error {
 	s := strings.Trim(string(data), "\"")
 	aComplex, _ := time.ParseDuration(s)
-	t.Duration = int64(aComplex.Seconds())
+	t.Duration = int(aComplex.Seconds())
 	return nil
 }

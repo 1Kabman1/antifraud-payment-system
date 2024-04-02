@@ -61,7 +61,7 @@ func (s *Storage) HasRule(id int) bool {
 	return ok
 }
 
-// HasCounter - Checks if there is a value in the map
+// HasCounter - Checks if there is a Value in the map
 func (s *Storage) HasCounter(key [16]byte) bool {
 	_, ok := s.counter[key]
 	return ok
@@ -79,19 +79,19 @@ func (s *Storage) SetCounter(key [16]byte, idRule int) {
 	}
 }
 
-// IncreaseValue - Increases value in counter
+// IncreaseValue - Increases Value in counter
 func (s *Storage) IncreaseValue(key [16]byte, AggregateValue string,
 	aAmount float64, duration int) {
 	_, c := s.Counter(key)
 	ord := NewOrder()
 	if AggregateValue == count {
 		c.TotalValue += 1
-		ord.value = 1
+		ord.Value = 1
 	} else {
 		c.TotalValue += int(aAmount)
-		ord.value = int(aAmount)
+		ord.Value = int(aAmount)
 	}
-	ord.t.Duration = time.Now().Unix()
+	ord.T.Duration = int(time.Now().Unix()) + duration
 	c.Values.PushBack(ord)
 	c.DeleteExpiredOnes()
 

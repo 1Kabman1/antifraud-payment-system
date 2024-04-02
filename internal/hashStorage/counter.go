@@ -16,9 +16,14 @@ func NewCounter() Counter {
 }
 
 func (c *Counter) DeleteExpiredOnes() {
-	for i := c.Values.Front(); i != nil; i = i.Next() {
-		if i.Value.(Order).t.Duration > 0 && i.Value.(Order).t.Duration < time.Now().Unix() {
+	for i := c.Values.Back(); i != nil; {
+		ord := i.Value.(Order)
+		if ord.T.Duration > 0 && ord.T.Duration < int(time.Now().Unix()) {
+			next := i.Prev()
 			c.Values.Remove(i)
+			i = next
+		} else {
+			i = i.Prev()
 		}
 	}
 }

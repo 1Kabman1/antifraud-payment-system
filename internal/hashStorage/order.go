@@ -1,8 +1,8 @@
 package hashStorage
 
 type Order struct {
-	value int
-	t     aTimeDuration
+	Value int
+	T     timeDuration
 }
 
 func NewOrder() Order {
