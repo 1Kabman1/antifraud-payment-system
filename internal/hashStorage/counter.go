@@ -22,6 +22,7 @@ func (c *Counter) DeleteExpiredOnes() {
 			next := i.Prev()
 			c.Values.Remove(i)
 			i = next
+			c.TotalValue -= ord.Value
 		} else {
 			i = i.Prev()
 		}
