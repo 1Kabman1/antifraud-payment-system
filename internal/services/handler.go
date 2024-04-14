@@ -124,7 +124,7 @@ func (h *ApiHandler) RegisterOperation(w http.ResponseWriter, r *http.Request) {
 
 		h.s.SetCounter(keyCounter, aRule.AggregationRuleId)
 
-		h.s.IncreaseValue(keyCounter, aRule.AggregateValue, payment[amount].(float64), int(aRule.Duration.Duration))
+		h.s.IncreaseValue(keyCounter, aRule.AggregateValue, payment[amount].(float64), int(aRule.Duration.DurationSec))
 
 	}
 }

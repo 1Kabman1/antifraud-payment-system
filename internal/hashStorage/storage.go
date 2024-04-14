@@ -91,7 +91,7 @@ func (s *Storage) IncreaseValue(key [16]byte, AggregateValue string,
 		c.TotalValue += int(aAmount)
 		ord.Value = int(aAmount)
 	}
-	ord.T.Duration = int(time.Now().Unix()) + duration
+	ord.T.DurationSec = int(time.Now().Unix()) + duration
 	c.Values.PushBack(ord)
 	c.DeleteExpiredOnes()
 

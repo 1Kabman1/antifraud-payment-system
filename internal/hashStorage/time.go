@@ -6,7 +6,7 @@ import (
 )
 
 type timeDuration struct {
-	Duration int
+	DurationSec int
 }
 
 //format time "0h1m1s"
@@ -14,6 +14,6 @@ type timeDuration struct {
 func (t *timeDuration) UnmarshalJSON(data []byte) error {
 	s := strings.Trim(string(data), "\"")
 	aComplex, _ := time.ParseDuration(s)
-	t.Duration = int(aComplex.Seconds())
+	t.DurationSec = int(aComplex.Seconds())
 	return nil
 }

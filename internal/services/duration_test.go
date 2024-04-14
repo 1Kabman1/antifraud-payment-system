@@ -14,13 +14,13 @@ func TestStorage_IncreaseValue(t *testing.T) {
 		Name:           "rule1",
 		AggregateBy:    []string{"a", "b"},
 		AggregateValue: "count",
-		Duration:       struct{ Duration int }{Duration: 001},
+		Duration:       struct{ DurationSec int }{DurationSec: 001},
 	}
 	rule2 := hashStorage.Rule{
 		Name:           "rule2",
 		AggregateBy:    []string{"c", "d"},
 		AggregateValue: "amount",
-		Duration:       struct{ Duration int }{Duration: 1000},
+		Duration:       struct{ DurationSec int }{DurationSec: 1000},
 	}
 
 	h := NewApiHandler()
