@@ -49,11 +49,13 @@ func (h *ApiHandler) GetAggregationRules(w http.ResponseWriter, _ *http.Request)
 	if json.Valid(ruleJson) {
 		if _, err = w.Write([]byte("Status " + "success \n")); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
+			h.errorLog.Println(err)
 			return
 		}
 
 		if _, err = w.Write(ruleJson); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
+			h.errorLog.Println(err)
 			return
 		}
 	}
@@ -74,16 +76,19 @@ func (h *ApiHandler) CreateAggregationRule(w http.ResponseWriter, r *http.Reques
 	}
 
 	if _, err := buf.ReadFrom(r.Body); err != nil {
+		h.errorLog.Println(err)
 		return
 	}
 
 	if err := json.Unmarshal(buf.Bytes(), &aRule); err != nil {
+		h.errorLog.Println(err)
 		return
 	}
 	h.s.SetRule(aRule.Name, &aRule)
 
 	if _, err := w.Write([]byte("Message " + "Rule " + strconv.Itoa(aRule.AggregationRuleId) + " created")); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+		h.errorLog.Println(err)
 		return
 	}
 }
