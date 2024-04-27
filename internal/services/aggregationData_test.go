@@ -25,13 +25,9 @@ func (m *myResponseWriter) Write(w []byte) (int, error) {
 			AggregateBy:       []string{"a", "b"},
 			AggregateValue:    "count",
 		}
-
 		resp := make(map[string]hashStorage.Rule)
-
 		resp[strconv.Itoa(aRule.AggregationRuleId)] = aRule
-
 		ruleJson, _ := json.Marshal(resp)
-
 		ok := assert.Equal(&m.t, string(w), string(ruleJson))
 		if !ok {
 			m.t.Fatal(w)
@@ -43,16 +39,13 @@ func (m *myResponseWriter) Write(w []byte) (int, error) {
 func (m *myResponseWriter) WriteHeader(_ int) {}
 
 func TestAggregationData(t *testing.T) {
-
 	rule1 := hashStorage.Rule{
 		Name:           "rule1",
 		AggregateBy:    []string{"a", "b"},
 		AggregateValue: "count",
 	}
-
 	h := NewApiHandler()
 	h.s.SetRule("rule1", &rule1)
-
 	r := http.Request{}
 	m := myResponseWriter{}
 	h.GetAggregationRules(&m, &r)

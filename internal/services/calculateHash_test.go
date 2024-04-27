@@ -12,5 +12,4 @@ func TestCalculateHash(t *testing.T) {
 	if !ok {
 		t.Fatal()
 	}
-
 }

@@ -1,44 +1,69 @@
 package hashStorage
 
+import "time"
+
 type Counter struct {
-	id         int
-	TotalValue int
-	//	Values     *list.List // delete
-	timeSeries [][]int // new
+	id             int
+	timeSeries     [][]int
+	expirationTime int
+	timer          int
+	stopTimer      chan bool
 }
 
-func NewCounter(timePeriod, expirationTime int) Counter {
-	tmp := make([][]int, expirationTime)
-	for i := range tmp {
-		tmp[i] = make([]int, timePeriod)
+func (c *Counter) timerCounter() {
+	defer close(c.stopTimer)
+	for {
+		select {
+		case <-time.After(1 * time.Minute):
+			c.timer += 1
+			if c.timer > c.expirationTime {
+				c.timer = 0
+			}
+			l := len(c.timeSeries[0])
+			for i := 0; i < l; i++ {
+				c.timeSeries[c.timer][i] = 0
+			}
+		case ok := <-c.stopTimer:
+			if ok {
+				break
+			}
+		}
 	}
-	c := Counter{timeSeries: tmp}
+}
+
+func NewCounter(timePer, expiration int) Counter {
+	tmp := make([][]int, expiration)
+	for i := range tmp {
+		tmp[i] = make([]int, timePer)
+	}
+	c := Counter{timeSeries: tmp,
+		expirationTime: expiration,
+	}
+	go c.timerCounter()
 	return c
 }
 
-func (c *Counter) IncreasingTheCounterCount() {
-
-	c.TotalValue += 1
-	ord.Value = 1
-
+func (c *Counter) IncreasingTheCounterValue(value int) {
+	if (c.expirationTime) >= c.timer {
+		index := c.timer
+		l := len(c.timeSeries[index]) - 1
+		for i := 0; i < l; i++ {
+			c.timeSeries[index][i] = c.timeSeries[index][i+1]
+		}
+		c.timeSeries[index][l] = value
+	}
 }
 
-func (c *Counter) IncreasingTheCounterAmount(amount int) {
-	c.TotalValue += amount
-	ord.Value = amount
-
+func (c *Counter) LenTimeSeries() int {
+	return len(c.timeSeries)
 }
 
-//func (c *Counter) DeleteExpiredOnes() {
-//	for i := c.Values.Back(); i != nil; {
-//		ord := i.Value.(Order)
-//		if ord.T.DurationSec > 0 && ord.T.DurationSec < int(time.Now().Unix()) {
-//			next := i.Prev()
-//			c.Values.Remove(i)
-//			i = next
-//			c.TotalValue -= ord.Value
-//		} else {
-//			i = i.Prev()
-//		}
-//	}
-//}
+func (c *Counter) SumActual() int {
+	result := 0
+	for _, series := range c.timeSeries {
+		for _, ser := range series {
+			result += ser
+		}
+	}
+	return result
+}

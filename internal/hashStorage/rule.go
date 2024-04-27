@@ -5,9 +5,8 @@ type Rule struct {
 	Name              string   `json:"Name"`
 	AggregateBy       []string `json:"AggregateBy"`
 	AggregateValue    string   `json:"AggregateValue"`
-	//Duration          timeDuration `json:"DurationSec"`
-	ExpirationTime int `json:"ExpirationTime"`
-	TimePeriod     int `json:"TimePeriod"`
+	ExpirationTime    int      `json:"ExpirationTime"`
+	TimePeriod        int      `json:"TimePeriod"`
 }
 
 func NewRule() Rule {
