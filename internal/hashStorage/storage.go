@@ -1,10 +1,8 @@
 package hashStorage
 
 import (
-	"container/list"
 	"errors"
 	"strconv"
-	"time"
 )
 
 const (
@@ -68,33 +66,57 @@ func (s *Storage) HasCounter(key [16]byte) bool {
 }
 
 // SetCounter - sets id for c
-func (s *Storage) SetCounter(key [16]byte, idRule int) {
+func (s *Storage) SetCounter(key [16]byte, idRule int) error {
+
 	if !s.HasCounter(key) {
-		aNewCounter := NewCounter()
-		aNewCounter.Values = list.New()
+		err, aRule := s.Rule(idRule)
+		if err != nil {
+			return err
+		}
+		aNewCounter := NewCounter(aRule.TimePeriod, aRule.ExpirationTime)
 		idCounter := s.CounterLen() + 1
 		aNewCounter.id = idCounter
-		s.counter[key] = &aNewCounter
 		s.AddToArchivist(idRule, idCounter)
+		//aNewCounter := NewCounter()
+		//aNewCounter.Values = list.New()
+		//idCounter := s.CounterLen() + 1
+		//aNewCounter.id = idCounter
+		//s.counter[key] = &aNewCounter
+		//s.AddToArchivist(idRule, idCounter)
+		return nil
 	}
+	return errors.New("The key does not exist")
 }
 
 // IncreaseValue - Increases Value in counter
-func (s *Storage) IncreaseValue(key [16]byte, AggregateValue string,
-	aAmount float64, duration int) {
-	_, c := s.Counter(key)
-	ord := NewOrder()
-	if AggregateValue == count {
-		c.TotalValue += 1
-		ord.Value = 1
-	} else {
-		c.TotalValue += int(aAmount)
-		ord.Value = int(aAmount)
-	}
-	ord.T.DurationSec = int(time.Now().Unix()) + duration
-	c.Values.PushBack(ord)
-	c.DeleteExpiredOnes()
+//func (s *Storage) IncreaseValue(key [16]byte, AggregateValue string,
+//	aAmount float64, duration int) {
+//	_, c := s.Counter(key)
+//	ord := NewOrder()
+//	if AggregateValue == count {
+//		c.TotalValue += 1
+//		ord.Value = 1
+//	} else {
+//		c.TotalValue += int(aAmount)
+//		ord.Value = int(aAmount)
+//	}
+//	ord.T.DurationSec = int(time.Now().Unix()) + duration
+//	c.Values.PushBack(ord)
+//	c.DeleteExpiredOnes()
+//
+//}
 
+//IncreaseValue - Increases Value in counter
+func (s *Storage) FixingThePayment(key [16]byte, AggregateValue string,
+	aAmount float64, duration int, r *Rule) {
+	_, c := s.Counter(key)
+	if AggregateValue == count {
+		c.IncreasingTheCounterCount()
+
+	} else {
+		c.IncreasingTheCounterAmount(int(aAmount))
+
+	}
 }
 
 // Counter - return Counter

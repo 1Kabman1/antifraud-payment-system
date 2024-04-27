@@ -112,24 +112,27 @@ func (h *ApiHandler) RegisterOperation(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	aggregatesBy, err := prepareTheDataForHashing(h.s.Rules(), payment)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		h.errorLog.Println(err)
+	aggregatesBy, aErr := prepareTheDataForHashing(h.s.Rules(), payment)
+	if aErr != nil {
+		http.Error(w, aErr.Error(), http.StatusInternalServerError)
+		h.errorLog.Println(aErr)
 		return
 	}
 
 	for nameRule, keyCounter := range calculateHash(aggregatesBy) {
-		err_, aRule := h.s.Rule(nameRule)
-		if err_ != nil {
-			http.Error(w, err_.Error(), http.StatusInternalServerError)
-			h.errorLog.Println(err_)
+		hteErr, aRule := h.s.Rule(nameRule)
+		if hteErr != nil {
+			http.Error(w, hteErr.Error(), http.StatusInternalServerError)
+			h.errorLog.Println(hteErr)
 			return
 		}
 
-		h.s.SetCounter(keyCounter, aRule.AggregationRuleId)
+		if err := h.s.SetCounter(keyCounter, aRule.AggregationRuleId); err != nil {
+			h.errorLog.Println(err)
+		}
 
-		h.s.IncreaseValue(keyCounter, aRule.AggregateValue, payment[amount].(float64), int(aRule.Duration.DurationSec))
+		//h.s.IncreaseValue(keyCounter, aRule.AggregateValue, payment[amount].(float64), int(aRule.Duration.DurationSec))
+		h.s.FixingThePayment(keyCounter, aRule.AggregateValue, payment[amount].(float64), int(aRule.Duration.DurationSec), aRule)
 
 	}
 }
