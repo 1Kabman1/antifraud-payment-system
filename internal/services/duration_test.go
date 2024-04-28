@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strings"
 	"testing"
+	"time"
 )
 
 func TestStorage_IncreaseValue(t *testing.T) {
@@ -13,14 +14,14 @@ func TestStorage_IncreaseValue(t *testing.T) {
 		Name:           "rule1",
 		AggregateBy:    []string{"a", "b"},
 		AggregateValue: "count",
-		ExpirationTime: 2,
+		ExpirationTime: 1,
 		TimePeriod:     2,
 	}
 	rule2 := hashStorage.Rule{
 		Name:           "rule2",
 		AggregateBy:    []string{"c", "d"},
 		AggregateValue: "amount",
-		ExpirationTime: 2,
+		ExpirationTime: 1,
 		TimePeriod:     2,
 	}
 	h := NewApiHandler()
@@ -33,7 +34,7 @@ func TestStorage_IncreaseValue(t *testing.T) {
 	r, _ := http.NewRequest("POST", "http://127.0.0.1:8080/register", strings.NewReader(body))
 	h.RegisterOperation(&w, r)
 	_, c := h.s.Counter(expectedKeyCounter1)
-	if ok := assert.EqualValues(t, c.LenTimeSeries(), 2); !ok {
+	if ok := assert.EqualValues(t, c.LenTimeSeries(), 1); !ok {
 		panic(t.Error)
 	}
 	r, _ = http.NewRequest("POST", "http://127.0.0.1:8080/register", strings.NewReader(body))
@@ -42,4 +43,5 @@ func TestStorage_IncreaseValue(t *testing.T) {
 	if ok := assert.EqualValues(t, c1.SumActual(), 200); !ok {
 		panic(t.Error)
 	}
+	<-time.After(1 * time.Minute)
 }

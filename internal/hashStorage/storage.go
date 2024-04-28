@@ -66,20 +66,20 @@ func (s *Storage) HasCounter(key [16]byte) bool {
 }
 
 // SetCounter - sets id for c
-func (s *Storage) SetCounter(key [16]byte, idRule int) error {
+func (s *Storage) SetCounter(key [16]byte, idRule int) {
 	if !s.HasCounter(key) {
 		err, aRule := s.Rule(idRule)
 		if err != nil {
-			return err
+			return
 		}
-		aNewCounter := NewCounter(aRule.TimePeriod, aRule.ExpirationTime)
+
+		aNewCounter := NewCounter(aRule.TimePeriod, aRule.ExpirationTime) //
 		idCounter := s.CounterLen() + 1
 		aNewCounter.id = idCounter
 		s.counter[key] = &aNewCounter
+		go s.counter[key].timerCounter()
 		s.AddToArchivist(idRule, idCounter)
-		return nil
 	}
-	return errors.New("The key does not exist")
 }
 
 // IncreaseValue - Increases Value in counter

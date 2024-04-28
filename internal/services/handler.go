@@ -111,9 +111,7 @@ func (h *ApiHandler) RegisterOperation(w http.ResponseWriter, r *http.Request) {
 			h.errorLog.Println(hteErr)
 			return
 		}
-		if err := h.s.SetCounter(keyCounter, aRule.AggregationRuleId); err != nil {
-			h.errorLog.Println(err)
-		}
+		h.s.SetCounter(keyCounter, aRule.AggregationRuleId)
 		h.s.FixingThePayment(keyCounter, aRule.AggregateValue, payment[amount].(float64))
 	}
 }
