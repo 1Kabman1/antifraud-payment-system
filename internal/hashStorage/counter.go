@@ -5,10 +5,10 @@ import (
 )
 
 type Counter struct {
-	id             int
-	timeSeries     [][]int
-	expirationTime int
-	timer          int
+	id               int
+	timeSeriesValues [][]int
+	expirationTime   int
+	timer            int
 }
 
 func (c *Counter) timerCounter() {
@@ -19,8 +19,8 @@ func (c *Counter) timerCounter() {
 			if c.timer >= c.expirationTime {
 				c.timer = 0
 			}
-			for i := 0; i < len(c.timeSeries[0]); i++ {
-				c.timeSeries[c.timer][i] = 0
+			for i := 0; i < len(c.timeSeriesValues[0]); i++ {
+				c.timeSeriesValues[c.timer][i] = 0
 			}
 		}
 	}
@@ -31,7 +31,7 @@ func NewCounter(timePer, expiration int) Counter {
 	for i := range tmp {
 		tmp[i] = make([]int, timePer)
 	}
-	c := Counter{timeSeries: tmp,
+	c := Counter{timeSeriesValues: tmp,
 		expirationTime: expiration,
 	}
 	return c
@@ -39,20 +39,20 @@ func NewCounter(timePer, expiration int) Counter {
 
 func (c *Counter) IncreasingTheCounterValue(value int) {
 	index := c.timer
-	l := len(c.timeSeries[index]) - 1
+	l := len(c.timeSeriesValues[index]) - 1
 	for i := 0; i < l; i++ {
-		c.timeSeries[index][i] = c.timeSeries[index][i+1]
+		c.timeSeriesValues[index][i] = c.timeSeriesValues[index][i+1]
 	}
-	c.timeSeries[index][l] = value
+	c.timeSeriesValues[index][l] = value
 }
 
 func (c *Counter) LenTimeSeries() int {
-	return len(c.timeSeries)
+	return len(c.timeSeriesValues)
 }
 
 func (c *Counter) SumActual() int {
 	result := 0
-	for _, series := range c.timeSeries {
+	for _, series := range c.timeSeriesValues {
 		for _, ser := range series {
 			result += ser
 		}
