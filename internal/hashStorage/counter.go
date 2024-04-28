@@ -9,41 +9,37 @@ type Counter struct {
 	timeSeriesValues [][]int
 	expirationTime   int
 	timer            int
+	timePeriod       int
 }
 
-func (c *Counter) timerCounter() {
+func (c *Counter) timerCounter(tmp int) {
 	for {
 		select {
-		case <-time.After(1 * time.Minute):
+		case <-time.After(time.Duration(tmp) * time.Second):
 			c.timer += 1
 			if c.timer >= c.expirationTime {
 				c.timer = 0
 			}
-			for i := 0; i < len(c.timeSeriesValues[0]); i++ {
-				c.timeSeriesValues[c.timer][i] = 0
-			}
+			c.timeSeriesValues[c.timer] = make([]int, 0, c.timePeriod)
 		}
 	}
 }
 
 func NewCounter(timePer, expiration int) Counter {
-	tmp := make([][]int, expiration)
+	exp := (expiration * 60) / timePer
+	tmp := make([][]int, exp)
 	for i := range tmp {
-		tmp[i] = make([]int, timePer)
+		tmp[i] = make([]int, 0, timePer)
 	}
 	c := Counter{timeSeriesValues: tmp,
-		expirationTime: expiration,
+		expirationTime: exp,
+		timePeriod:     timePer,
 	}
 	return c
 }
 
 func (c *Counter) IncreasingTheCounterValue(value int) {
-	index := c.timer
-	l := len(c.timeSeriesValues[index]) - 1
-	for i := 0; i < l; i++ {
-		c.timeSeriesValues[index][i] = c.timeSeriesValues[index][i+1]
-	}
-	c.timeSeriesValues[index][l] = value
+	c.timeSeriesValues[c.timer] = append(c.timeSeriesValues[c.timer], value)
 }
 
 func (c *Counter) LenTimeSeries() int {

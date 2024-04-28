@@ -72,13 +72,12 @@ func (s *Storage) SetCounter(key [16]byte, idRule int) {
 		if err != nil {
 			return
 		}
-
 		aNewCounter := NewCounter(aRule.TimePeriod, aRule.ExpirationTime) //
 		idCounter := s.CounterLen() + 1
 		aNewCounter.id = idCounter
 		s.counter[key] = &aNewCounter
-		go s.counter[key].timerCounter()
 		s.AddToArchivist(idRule, idCounter)
+		go s.counter[key].timerCounter(aNewCounter.timePeriod)
 	}
 }
 
