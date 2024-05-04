@@ -77,7 +77,6 @@ func (s *Storage) SetCounter(key [16]byte, idRule int) {
 		aNewCounter.id = idCounter
 		s.counter[key] = &aNewCounter
 		s.AddToArchivist(idRule, idCounter)
-		go s.counter[key].timerCounter(aNewCounter.timePeriod)
 	}
 }
 

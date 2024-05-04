@@ -35,11 +35,22 @@ func NewCounter(timePer, expiration int) Counter {
 		expirationTime: exp,
 		timePeriod:     timePer,
 	}
+	if exp > 0 {
+		go c.timerCounter(timePer)
+	} else {
+		c.expirationTime = -1
+		c.timeSeriesValues = append(c.timeSeriesValues, make([]int, 1))
+	}
 	return c
 }
 
 func (c *Counter) IncreasingTheCounterValue(value int) {
-	c.timeSeriesValues[c.timer] = append(c.timeSeriesValues[c.timer], value)
+	if c.expirationTime > -1 {
+		c.timeSeriesValues[c.timer] = append(c.timeSeriesValues[c.timer], value)
+		return
+	}
+	c.timeSeriesValues[0][0] += value
+
 }
 
 func (c *Counter) LenTimeSeries() int {
